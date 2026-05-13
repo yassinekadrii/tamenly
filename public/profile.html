@@ -13,6 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <title>Mon Profil</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -295,6 +296,10 @@
                 <label data-i18n="profile.email">Email</label>
                 <input type="email" id="email" disabled style="background: #f1f5f9;">
             </div>
+            <div class="form-group">
+                <label data-i18n="profile.phone">Numéro de téléphone</label>
+                <input type="tel" id="phone" placeholder="+33 6 12 34 56 78">
+            </div>
 
             <!-- Doctor-Specific Professional Sections -->
             <div id="doctorOnlySection" style="display: none;">
@@ -314,6 +319,23 @@
                         <textarea id="bio" data-i18n="profile.bio"
                             placeholder="Décrivez votre parcours, vos méthodes..."></textarea>
                     </div>
+
+                        <div class="file-input-group">
+                            <label data-i18n="profile.certification">Certification / Diplôme (PDF)</label>
+                            <input type="file" accept=".pdf" onchange="handleDocUpload(event, 'certification')">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                                <span id="certStatus" class="doc-status status-empty">Non téléchargé</span>
+                                <button type="button" id="viewCertBtn" onclick="viewCurrentDoc('certification')" style="display: none; background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 0.85rem; text-decoration: underline;">Voir</button>
+                            </div>
+                        </div>
+                        <div class="file-input-group">
+                            <label data-i18n="profile.cv">Curriculum Vitae (CV) (PDF)</label>
+                            <input type="file" accept=".pdf" onchange="handleDocUpload(event, 'cv')">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                                <span id="cvStatus" class="doc-status status-empty">Non téléchargé</span>
+                                <button type="button" id="viewCvBtn" onclick="viewCurrentDoc('cv')" style="display: none; background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 0.85rem; text-decoration: underline;">Voir</button>
+                            </div>
+                        </div>
 
                     <div class="form-group">
                         <label data-i18n="profile.availability">Disponibilités</label>
@@ -337,40 +359,7 @@
                     </div>
                 </div>
 
-                <h3 data-i18n="profile.professional_docs"
-                    style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-dark); border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 0.2rem;">
-                    Documents Professionnels</h3>
 
-                <div class="professional-docs" style="display: block;">
-                    <div class="doc-item">
-                        <div class="doc-info">
-                            <span class="doc-icon">📄</span>
-                            <div>
-                                <div class="doc-name" data-i18n="profile.cert_label">Certification / Diplôme</div>
-                                <span id="certStatus" class="doc-status status-empty" data-i18n="profile.no_doc">Non
-                                    téléchargé</span>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-upload-doc"
-                            onclick="document.getElementById('certInput').click()">Upload</button>
-                        <input type="file" id="certInput" style="display: none;"
-                            onchange="handleDocUpload(event, 'certification')">
-                    </div>
-
-                    <div class="doc-item">
-                        <div class="doc-info">
-                            <span class="doc-icon">💼</span>
-                            <div>
-                                <div class="doc-name" data-i18n="profile.cv_label">Curriculum Vitae (CV)</div>
-                                <span id="cvStatus" class="doc-status status-empty" data-i18n="profile.no_doc">Non
-                                    téléchargé</span>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-upload-doc"
-                            onclick="document.getElementById('cvInput').click()">Upload</button>
-                        <input type="file" id="cvInput" style="display: none;" onchange="handleDocUpload(event, 'cv')">
-                    </div>
-                </div>
             </div>
             <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border-color);">
             <div class="form-group">
@@ -399,6 +388,7 @@
         document.getElementById('firstName').value = user.firstName || '';
         document.getElementById('lastName').value = user.lastName || '';
         document.getElementById('email').value = user.email || '';
+        document.getElementById('phone').value = user.phone || '';
 
         const previewEl = document.getElementById('profilePreview');
         if (user.profilePicture) {
@@ -414,10 +404,12 @@
             if (user.certification) {
                 document.getElementById('certStatus').textContent = 'Téléchargé';
                 document.getElementById('certStatus').className = 'doc-status status-uploaded';
+                document.getElementById('viewCertBtn').style.display = 'inline';
             }
             if (user.cv) {
                 document.getElementById('cvStatus').textContent = 'Téléchargé';
                 document.getElementById('cvStatus').className = 'doc-status status-uploaded';
+                document.getElementById('viewCvBtn').style.display = 'inline';
             }
 
             // Load listing data
@@ -447,34 +439,44 @@
         function handleDocUpload(event, type) {
             const file = event.target.files[0];
             if (file) {
+                // Check file size (optional but good for UX)
+                if (file.size > 50 * 1024 * 1024) {
+                    showNotification("Le fichier est trop volumineux (max 50MB)", "error");
+                    event.target.value = '';
+                    return;
+                }
+
+                const statusEl = document.getElementById(type === 'certification' ? 'certStatus' : 'cvStatus');
+                const viewBtn = document.getElementById(type === 'certification' ? 'viewCertBtn' : 'viewCvBtn');
+                
+                statusEl.textContent = 'Chargement...';
+                
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     if (type === 'certification') {
                         base64Cert = e.target.result;
-                        document.getElementById('certStatus').textContent = 'Prêt à enregistrer';
-                        document.getElementById('certStatus').className = 'doc-status status-uploaded';
                     } else {
                         base64Cv = e.target.result;
-                        document.getElementById('cvStatus').textContent = 'Prêt à enregistrer';
-                        document.getElementById('cvStatus').className = 'doc-status status-uploaded';
                     }
+                    statusEl.textContent = 'Prêt à enregistrer';
+                    statusEl.className = 'doc-status status-uploaded';
+                    viewBtn.style.display = 'inline';
+                    // Update the view function to use the new local data
+                    viewBtn.onclick = () => {
+                        const win = window.open();
+                        win.document.write('<iframe src="' + e.target.result + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                    };
+                };
+                reader.onerror = () => {
+                    statusEl.textContent = 'Erreur de lecture';
+                    statusEl.className = 'doc-status status-empty';
                 };
                 reader.readAsDataURL(file);
             }
         }
 
         function goBack() {
-            const referrer = document.referrer;
-            // If we have a referrer from our own site and it's not the login page, go there
-            if (referrer && referrer.includes(window.location.hostname) && !referrer.includes('login.html')) {
-                window.location.href = referrer;
-                return;
-            }
-
-            // Fallback based on role
-            if (user.role === 'admin') window.location.href = 'admin-dashboard.html';
-            else if (user.role === 'doctor') window.location.href = 'doctor-chat.html';
-            else window.location.href = 'index.html';
+            window.location.href = 'index.html';
         }
 
         async function handleUpdate(e) {
@@ -484,10 +486,11 @@
 
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
+            const phone = document.getElementById('phone').value;
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
 
-            const payload = { firstName, lastName };
+            const payload = { firstName, lastName, phone };
             if (base64Image) payload.profilePicture = base64Image;
             if (base64Cert) payload.certification = base64Cert;
             if (base64Cv) payload.cv = base64Cv;
@@ -529,14 +532,15 @@
 
                 if (data.success) {
                     showNotification(getNestedTranslation(currentLang, 'profile.success'), 'success');
-                    // Update user in local storage
                     const updatedUser = { ...user, ...data.user };
                     localStorage.setItem('user', JSON.stringify(updatedUser));
-
                     document.getElementById('currentPassword').value = '';
                     document.getElementById('newPassword').value = '';
                 } else {
-                    const errMsg = data.debug ? `${data.message} (${data.debug})` : (data.message || getNestedTranslation(currentLang, 'profile.error'));
+                    let errMsg = data.message || getNestedTranslation(currentLang, 'profile.error');
+                    if (response.status === 413) {
+                        errMsg = "Le fichier est trop volumineux pour le serveur. Veuillez utiliser un fichier plus petit ou contacter le support.";
+                    }
                     showNotification(errMsg, 'error');
                 }
             } catch (error) {
@@ -547,6 +551,13 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Enregistrer les modifications';
             }
+        }
+
+        function viewCurrentDoc(type) {
+            const data = type === 'certification' ? user.certification : user.cv;
+            if (!data) return;
+            const win = window.open();
+            win.document.write('<iframe src="' + data + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
         }
 
         function showMessage(text, type) {

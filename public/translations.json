@@ -13,6 +13,7 @@
             "dashboard": "Dashboard",
             "profile": "Profile",
             "appointments": "Appointments",
+            "schedule": "Planning",
             "search_patient": "Search patient..."
         },
         "hero": {
@@ -25,6 +26,7 @@
         "sections": {
             "services": "Our Services",
             "specialists": "Our Specialists",
+            "specialists_subtitle": "Meet our qualified psychologists ready to listen to you",
             "about": "About Us"
         },
         "login": {
@@ -99,16 +101,23 @@
             "track_mood": "Track your mood"
         },
         "chat": {
+            "status": {
+                "online": "Online",
+                "offline": "Offline",
+                "typing": "Typing..."
+            },
             "sidebar": {
                 "search": "Search...",
                 "no_patients": "No patients found",
                 "no_doctors": "No doctors found",
                 "no_appointments": "No appointments",
                 "no_appointments_desc": "You don't have any appointments scheduled yet.",
-                "title": "My Discussions",
-                "loading_chats": "Loading chats...",
+                "title": "My Doctors",
+                "loading_chats": "Loading doctors...",
                 "welcome_title": "Welcome to your health space",
-                "welcome_desc": "Select a discussion or contact a specialist from the home page to start."
+                "welcome_desc": "Select a discussion or contact a specialist from the home page to start.",
+                "new_conversation": "New discussion",
+                "new_doctor": "New doctor (no messages yet)"
             },
             "header": {
                 "video_call": "Start Video Call",
@@ -119,6 +128,7 @@
                 "view_prescriptions": "View Prescriptions",
                 "accept": "Accept",
                 "block": "Block",
+                "unblock": "Unblock",
                 "request_access": "Request Access",
                 "pending_approval": "Waiting for Approval",
                 "blocked_by_doctor": "Communication Blocked",
@@ -132,7 +142,46 @@
                 "select_doctor": "Select a doctor",
                 "select_patient": "Select a patient",
                 "consultation_ongoing": "Consultation in progress",
-                "hang_up": "Hang up"
+                "hang_up": "Hang up",
+                "video_ongoing": "Video call in progress...",
+                "audio_ongoing": "Audio call in progress...",
+                "rejoin": "Rejoin",
+                "google_meet": "Google Meet",
+                "whatsapp": "WhatsApp",
+                "whatsapp_message": "Hello, I am your psychologist on PsyConnect. We can start the consultation now.",
+                "hub": {
+                    "patient_info": "Patient Information",
+                    "contact": "Contact",
+                    "health_mood": "Health & Mood",
+                    "no_mood": "Mood not recorded",
+                    "no_assessment": "Test not taken",
+                    "last_whatsapp": "Last WhatsApp contact",
+                    "whatsapp_desc": "Start video or audio consultation",
+                    "prescription_desc": "Write a new PDF prescription",
+                    "note_bio": "Patient Note / Bio"
+                }
+            },
+            "profile": {
+                "title": "Edit My Profile",
+                "doctor_section": "Professional Listing",
+                "professional_docs": "Qualifications & Documents",
+                "bio": "Professional Bio",
+                "specialty": "Specialty",
+                "availability": "Availability",
+                "location": "Location",
+                "consultation_mode": "Consultation Mode",
+                "cv_label": "Curriculum Vitae (CV)",
+                "cert_label": "Certification / Diploma",
+                "no_doc": "No document uploaded",
+                "view_doc": "View Document",
+                "submit": "Save Changes",
+                "success": "Profile updated successfully",
+                "error": "Error updating profile",
+                "auth_error": "Current password required",
+                "back": "Back to dashboard",
+                "mode_online": "Online Only",
+                "mode_office": "Office Only",
+                "mode_both": "Both (Online & Office)"
             },
             "form": {
                 "send": "Send",
@@ -140,19 +189,63 @@
             },
             "prescription": {
                 "title": "Medical Prescription",
+                "modal_title": "New Prescription",
+                "modal_subtitle": "You can combine multiple sections",
+                "tabs": {
+                    "medicines": "Medicines",
+                    "pdf": "PDF File",
+                    "exercises": "Exercises"
+                },
+                "placeholders": {
+                    "med_name": "Medicine name (e.g. Paracetamol)",
+                    "med_dosage": "Dosage (e.g. 500mg)",
+                    "med_duration": "Duration (e.g. 7 days)",
+                    "med_notes": "Notes (e.g. after meals)",
+                    "ex_title": "Exercise title (e.g. Daily walk)",
+                    "ex_freq": "Frequency (e.g. 3x/week)",
+                    "ex_duration": "Duration (e.g. 30 min)",
+                    "ex_desc": "Detailed description / instructions",
+                    "general_instructions": "e.g. Recommended rest, avoid intense sports, drink plenty of water..."
+                },
                 "add_medicine": "Add Medicine",
-                "medicine_name": "Medicine Name",
-                "dosage": "Dosage",
-                "duration": "Duration (days)",
-                "notes": "Intake Notes",
-                "instructions": "General Instructions",
-                "save": "Save Prescription",
-                "download": "Download PDF",
-                "upload_pdf": "Alternative: Upload PDF",
+                "add_exercise": "Add Exercise",
+                "upload_title": "Upload a PDF prescription",
+                "upload_desc": "Existing PDF file (scan, digital prescription...)",
+                "choose_file": "Choose a file",
                 "pdf_ready": "PDF ready to send",
-                "view_pdf": "View PDF",
+                "instructions_label": "General Instructions",
+                "save": "Save Prescription",
+                "submit": "Send",
+                "download": "Download PDF",
                 "generate_pdf": "Generate PDF",
-                "doc_attached": "PDF document attached by doctor"
+                "view_pdf": "View PDF",
+                "print": "Print",
+                "pdf_attached": "PDF document attached by doctor",
+                "no_prescriptions": "No prescriptions found.",
+                "receipt_summary": "New prescription received",
+                "receipt_meds": "medication(s)",
+                "receipt_ex": "exercise(s)",
+                "receipt_pdf": "PDF attached",
+                "receipt_footer": "Check your patient space for details.",
+                "label_medicines": "Medicines & Treatment",
+                "label_exercises": "Therapeutic Recommendations",
+                "label_instructions": "Additional Instructions",
+                "label_signature": "Signature & Stamp",
+                "digital_cert": "Digital document certified by",
+                "platform_name": "Mental Health Platform",
+                "medicine_name": "Designation",
+                "dosage": "Dosage",
+                "duration": "Duration"
+            },
+            "notifications": {
+                "request_sent": "Invitation sent! The doctor will accept it so you can talk to them.",
+                "error_sending": "Error sending message",
+                "prescription_success": "Prescription sent successfully!",
+                "select_patient_first": "Please select a patient first.",
+                "call_incoming": "Incoming video call!",
+                "call_incoming_btn": "📞 INCOMING CALL! Click the green button.",
+                "generating_doc": "Generating document...",
+                "doc_ready": "Document ready!"
             }
         },
         "profile": {
@@ -210,17 +303,21 @@
             "cancel": "Cancel",
             "close": "Close",
             "save": "Save",
-            "loading": "Loading..."
+            "loading": "Loading...",
+        "prod_notice": "Current architecture (Polling/WhatsApp) optimized for cost and stability. A full real-time migration (WebSocket/WebRTC) would require premium Cloud/VPS hosting with additional costs.",
+            "delete": "Delete",
+            "edit": "Edit",
+            "view": "View"
         },
         "services": {
             "title": "Our Services",
             "subtitle": "Solutions tailored to your needs for your mental well-being",
-            "individual_title": "Individual Therapy",
-            "individual_desc": "Personalized support with qualified psychologists to help you overcome personal challenges and achieve your well-being goals.",
-            "couple_title": "Couple Therapy",
-            "couple_desc": "Strengthen your relationship and improve communication through our couples therapy sessions with experienced specialists.",
-            "family_title": "Family Therapy",
-            "family_desc": "Create a harmonious family environment and resolve conflicts with the help of our professional family therapists."
+            "individual_title": "Cognitive Behavioral Intervention",
+            "individual_desc": "Sessions focusing on enhancing psychological resilience and developing mature coping strategies to ensure the restoration of psychological balance.",
+            "couple_title": "Attachment and Communication Dynamics",
+            "couple_desc": "Analysis of emotional attachment patterns and addressing reactive rigidity between partners.",
+            "family_title": "Balance and Systemic Control",
+            "family_desc": "Study of family interactions and redrawing psychological boundaries between individuals. We aim to correct roles within the family system and provide a healthy and stable growth environment."
         },
         "about": {
             "title": "About Us",
@@ -237,7 +334,13 @@
             "rights": "All rights reserved.",
             "made_with": "Made with ❤️ by Yassine Kadri.",
             "company": "Company",
-            "support": "Support"
+            "support": "Support",
+            "team": "Our Team",
+            "careers": "Careers",
+            "blog": "Blog",
+            "help_center": "Help Center",
+            "privacy": "Privacy Policy",
+            "terms": "Terms & Conditions"
         },
         "booking": {
             "book_btn": "Book Appointment",
@@ -270,7 +373,14 @@
             "latests_prescriptions": "Latest Prescriptions",
             "find_doctor": "Find a Specialist",
             "no_upcoming": "No upcoming appointments",
-            "view_all": "View all"
+            "view_all": "View all",
+            "search_patient": "Search for a patient...",
+            "loading": "Loading dashboard data..."
+        },
+        "assessment": {
+            "title": "Quick Assessment Test",
+            "subtitle": "Check your mental state in 2 minutes.",
+            "cta": "Take the test"
         }
     },
     "fr": {
@@ -286,7 +396,9 @@
             "my_patients": "Mes Patients",
             "dashboard": "Dashboard",
             "profile": "Profil",
-            "appointments": "Rendez-vous"
+            "appointments": "Rendez-vous",
+            "schedule": "Planning",
+            "search_patient": "Rechercher un patient..."
         },
         "hero": {
             "title": "Votre bien-être mental,",
@@ -298,6 +410,7 @@
         "sections": {
             "services": "Nos Services",
             "specialists": "Nos Spécialistes",
+            "specialists_subtitle": "Rencontrez nos psychologues qualifiés prêts à vous écouter",
             "about": "À Propos"
         },
         "login": {
@@ -372,16 +485,23 @@
             "track_mood": "Suivre votre humeur"
         },
         "chat": {
+            "status": {
+                "online": "En ligne",
+                "offline": "Hors ligne",
+                "typing": "En train d'écrire..."
+            },
             "sidebar": {
                 "search": "Rechercher...",
                 "no_patients": "Aucun patient trouvé",
                 "no_doctors": "Aucun médecin trouvé",
                 "no_appointments": "Aucun rendez-vous",
                 "no_appointments_desc": "Vous n'avez pas encore de rendez-vous programmé.",
-                "title": "Mes Discussions",
-                "loading_chats": "Chargement des discussions...",
+                "title": "Mes Médecins",
+                "loading_chats": "Chargement des médecins...",
                 "welcome_title": "Bienvenue dans votre espace santé",
-                "welcome_desc": "Sélectionnez une discussion ou contactez un spécialiste depuis l'accueil pour commencer."
+                "welcome_desc": "Sélectionnez une discussion ou contactez un spécialiste depuis l'accueil pour commencer.",
+                "new_conversation": "Nouvelle discussion",
+                "new_doctor": "Nouveau médecin (pas encore de message)"
             },
             "header": {
                 "video_call": "Appel Vidéo",
@@ -392,6 +512,7 @@
                 "view_prescriptions": "Voir les ordonnances",
                 "accept": "Accepter",
                 "block": "Bloquer",
+                "unblock": "Débloquer",
                 "request_access": "Demander l'accès",
                 "pending_approval": "En attente d'approbation",
                 "blocked_by_doctor": "Communication bloquée",
@@ -405,7 +526,35 @@
                 "select_doctor": "Sélectionnez un médecin",
                 "select_patient": "Sélectionnez un patient",
                 "consultation_ongoing": "Consultation en cours",
-                "hang_up": "Raccrocher"
+                "hang_up": "Raccrocher",
+                "video_ongoing": "Appel vidéo en cours...",
+                "audio_ongoing": "Appel audio en cours...",
+                "rejoin": "Rejoindre",
+                "google_meet": "Google Meet",
+                "whatsapp": "WhatsApp",
+                "whatsapp_message": "Bonjour, je suis votre psychologue sur PsyConnect. Nous pouvons commencer la consultation."
+            },
+            "profile": {
+                "title": "Modifier mon profil",
+                "doctor_section": "Annonce Professionnelle",
+                "professional_docs": "Qualifications & Documents",
+                "bio": "Bio Professionnelle",
+                "specialty": "Spécialité",
+                "availability": "Disponibilités",
+                "location": "Lieu du Cabinet",
+                "consultation_mode": "Mode de Consultation",
+                "cv_label": "Curriculum Vitae (CV)",
+                "cert_label": "Certification / Diplôme",
+                "no_doc": "Aucun document téléchargé",
+                "view_doc": "Voir le document",
+                "submit": "Enregistrer les modifications",
+                "success": "Profil mis à jour avec succès",
+                "error": "Erreur lors de la mise à jour",
+                "auth_error": "Mot de passe actuel requis",
+                "back": "Retour au tableau de bord",
+                "mode_online": "En ligne uniquement",
+                "mode_office": "En cabinet uniquement",
+                "mode_both": "Les deux (En ligne & Présentiel)"
             },
             "form": {
                 "send": "Envoyer",
@@ -413,19 +562,63 @@
             },
             "prescription": {
                 "title": "Ordonnance Médicale",
+                "modal_title": "Nouvelle Ordonnance",
+                "modal_subtitle": "Vous pouvez combiner plusieurs sections",
+                "tabs": {
+                    "medicines": "Médicaments",
+                    "pdf": "Fichier PDF",
+                    "exercises": "Exercices"
+                },
+                "placeholders": {
+                    "med_name": "Nom du médicament (ex: Paracétamol)",
+                    "med_dosage": "Dosage (ex: 500mg)",
+                    "med_duration": "Durée (ex: 7j)",
+                    "med_notes": "Notes (ex: après repas)",
+                    "ex_title": "Titre de l'exercice (ex: Marche quotidienne)",
+                    "ex_freq": "Fréquence (ex: 3×/semaine)",
+                    "ex_duration": "Durée (ex: 30 min)",
+                    "ex_desc": "Description / instructions détaillées",
+                    "general_instructions": "Ex: Repos recommandé, éviter le sport intense, boire beaucoup d'eau…"
+                },
                 "add_medicine": "Ajouter Médicament",
-                "medicine_name": "Nom du médicament",
-                "dosage": "Dosage",
-                "duration": "Durée (jours)",
-                "notes": "Instructions de prise",
-                "instructions": "Instructions générales",
-                "save": "Enregistrer l'ordonnance",
-                "download": "Télécharger PDF",
-                "upload_pdf": "Alternative : Télécharger PDF",
+                "add_exercise": "Ajouter Exercice",
+                "upload_title": "Télécharger une ordonnance PDF",
+                "upload_desc": "Fichier PDF existant (scan, ordonnance numérique…)",
+                "choose_file": "Choisir un fichier",
                 "pdf_ready": "PDF prêt à être envoyé",
-                "view_pdf": "Voir PDF",
+                "instructions_label": "Instructions générales",
+                "save": "Enregistrer l'ordonnance",
+                "submit": "Envoyer",
+                "download": "Télécharger PDF",
                 "generate_pdf": "Générer PDF",
-                "doc_attached": "Document PDF joint par le médecin"
+                "view_pdf": "Voir PDF",
+                "print": "Imprimer",
+                "pdf_attached": "Document PDF joint par le médecin",
+                "no_prescriptions": "Aucune ordonnance trouvée.",
+                "receipt_summary": "Nouvelle ordonnance reçue",
+                "receipt_meds": "médicament(s)",
+                "receipt_ex": "exercice(s)",
+                "receipt_pdf": "PDF joint",
+                "receipt_footer": "Consultez votre espace patient pour les détails.",
+                "label_medicines": "Médicaments & Traitement",
+                "label_exercises": "Recommandations Thérapeutiques",
+                "label_instructions": "Instructions complémentaires",
+                "label_signature": "Signature & Cachet",
+                "digital_cert": "Document numérique certifié par le",
+                "platform_name": "Plateforme de Santé Mentale",
+                "medicine_name": "Désignation",
+                "dosage": "Posologie",
+                "duration": "Durée"
+            },
+            "notifications": {
+                "request_sent": "Invitation envoyée ! Le médecin va l'accepter pour que vous puissiez lui parler.",
+                "error_sending": "Erreur lors de l'envoi du message",
+                "prescription_success": "Ordonnance envoyée avec succès !",
+                "select_patient_first": "Veuillez d'abord sélectionner un patient.",
+                "call_incoming": "Appel vidéo entrant !",
+                "call_incoming_btn": "📞 APPEL ENTRANT ! Cliquez sur le bouton vert.",
+                "generating_doc": "Génération du document en cours...",
+                "doc_ready": "Document prêt !"
             }
         },
         "profile": {
@@ -483,17 +676,21 @@
             "cancel": "Annuler",
             "close": "Fermer",
             "save": "Enregistrer",
-            "loading": "Chargement..."
+            "loading": "Chargement...",
+            "prod_notice": "Architecture actuelle (Polling/WhatsApp) optimisée pour le coût et la stabilité. Une migration temps-réel (WebSocket/WebRTC) nécessiterait un hébergement Cloud/VPS premium avec des coûts supplémentaires.",
+            "delete": "Supprimer",
+            "edit": "Modifier",
+            "view": "Voir"
         },
         "services": {
             "title": "Nos Services",
             "subtitle": "Des solutions adaptées à vos besoins pour votre bien-être mental",
-            "individual_title": "Thérapie Individuelle",
-            "individual_desc": "Un accompagnement personnalisé avec des psychologues qualifiés pour vous aider à surmonter vos défis personnels et atteindre vos objectifs de bien-être.",
-            "couple_title": "Thérapie de Couple",
-            "couple_desc": "Renforcez votre relation et améliorez votre communication grâce à nos séances de thérapie de couple avec des spécialistes expérimentés.",
-            "family_title": "Thérapie Familiale",
-            "family_desc": "Créez un environnement familial harmonieux et résolvez les conflits avec l'aide de nos thérapeutes familiaux professionnels."
+            "individual_title": "Intervention Cognitivo-Comportementale",
+            "individual_desc": "Séances axées sur le renforcement de la résilience psychologique et le développement de stratégies d'adaptation matures pour assurer le rétablissement de l'équilibre psychologique.",
+            "couple_title": "Dynamique de l'Attachement et de la Communication",
+            "couple_desc": "Analyse des modes d'attachement émotionnel et traitement de la rigidité réactive entre les partenaires.",
+            "family_title": "Équilibre et Régulation Systémique",
+            "family_desc": "Étude des interactions familiales et redéfinition des frontières psychologiques entre les individus. Nous visons à corriger les rôles au sein du système familial et à offrir un environnement de croissance sain et stable."
         },
         "about": {
             "title": "À Propos de Nous",
@@ -510,7 +707,13 @@
             "rights": "Tous droits réservés.",
             "made_with": "Fabriqué avec ❤️ par Yassine Kadri.",
             "company": "Entreprise",
-            "support": "Support"
+            "support": "Support",
+            "team": "Notre Équipe",
+            "careers": "Carrières",
+            "blog": "Blog",
+            "help_center": "Centre d'aide",
+            "privacy": "Confidentialité",
+            "terms": "Conditions"
         },
         "booking": {
             "book_btn": "Prendre Rendez-vous",
@@ -543,7 +746,14 @@
             "latests_prescriptions": "Dernières Ordonnances",
             "find_doctor": "Trouver un Spécialiste",
             "no_upcoming": "Aucun rendez-vous à venir",
-            "view_all": "Voir tout"
+            "view_all": "Voir tout",
+            "search_patient": "Rechercher un patient...",
+            "loading": "Chargement des données..."
+        },
+        "assessment": {
+            "title": "Test d'Évaluation Rapide",
+            "subtitle": "Faites le point sur votre état mental en 2 minutes.",
+            "cta": "Passer le test"
         }
     },
     "ar": {
@@ -559,18 +769,21 @@
             "my_patients": "مرضاي",
             "dashboard": "لوحة التحكم",
             "profile": "الملف الشخصي",
-            "appointments": "المواعيد"
+            "appointments": "المواعيد",
+            "schedule": "الجدول الزمني",
+            "search_patient": "البحث عن مريض..."
         },
         "hero": {
             "title": "صحتك النفسية،",
             "title_highlight": "أولويتنا",
-            "subtitle": "اكتشف مساحة للاستماع والدعم مع مهنيين مؤهلين. استشر من منزلك، وفي أمان تام.",
+            "subtitle": "اكتشف مساحة للاستماع والدعم مع مهنيين مؤهلين عبر منصة طمئن. استشر من منزلك، وفي أمان تام.",
             "btn_start": "ابدأ استشاراتك",
             "btn_how": "كيف يعمل؟"
         },
         "sections": {
             "services": "خدماتنا",
             "specialists": "أخصائيونا",
+            "specialists_subtitle": "قابل أطباءنا النفسيين المؤهلين والمستعدين للاستماع إليك",
             "about": "حولنا"
         },
         "login": {
@@ -645,26 +858,34 @@
             "track_mood": "تتبع حالتك المزاجية"
         },
         "chat": {
+            "status": {
+                "online": "متصل",
+                "offline": "غير متصل",
+                "typing": "يكتب الآن..."
+            },
             "sidebar": {
                 "search": "بحث...",
                 "no_patients": "لم يتم العثور على مرضى",
                 "no_doctors": "لم يتم العثور على أطباء",
                 "no_appointments": "لا يوجد مواعيد",
                 "no_appointments_desc": "ليس لديك أي مواعيد مجدولة بعد.",
-                "title": "محادثاتي",
-                "loading_chats": "جاري تحميل المحادثات...",
+                "title": "أطبائي",
+                "loading_chats": "جاري تحميل الأطباء...",
                 "welcome_title": "مرحباً بك في مساحتك الصحية",
-                "welcome_desc": "اختر محادثة أو تواصل مع أخصائي من الصفحة الرئيسية للبدء."
+                "welcome_desc": "اختر محادثة أو تواصل مع أخصائي من الصفحة الرئيسية للبدء.",
+                "new_conversation": "محادثة جديدة",
+                "new_doctor": "طبيب جديد (لا توجد رسائل بعد)"
             },
             "header": {
-                "video_call": "بدء مكالمة فيديو",
-                "audio_call": "بدء مكالمة صوتية",
-                "join_video": "الانضمام للمكالمة",
+                "video_call": "مكالمة فيديو",
+                "audio_call": "مكالمة صوتية",
+                "join_video": "انضمام",
                 "share_screen": "مشاركة الشاشة",
                 "stop_sharing": "إيقاف المشاركة",
                 "view_prescriptions": "عرض الوصفات",
                 "accept": "قبول",
                 "block": "حظر",
+                "unblock": "إلغاء الحظر",
                 "request_access": "طلب الوصول",
                 "pending_approval": "في انتظار الموافقة",
                 "blocked_by_doctor": "الاتصال محظور",
@@ -678,7 +899,35 @@
                 "select_doctor": "اختر طبيباً",
                 "select_patient": "اختر مريضاً",
                 "consultation_ongoing": "الاستشارة جارية",
-                "hang_up": "إنهاء المكالمة"
+                "hang_up": "إنهاء المكالمة",
+                "video_ongoing": "مكالمة فيديو جارية...",
+                "audio_ongoing": "مكالمة صوتية جارية...",
+                "rejoin": "إعادة الانضمام",
+                "google_meet": "جوجل ميت",
+                "whatsapp": "واتساب",
+                "whatsapp_message": "مرحباً، أنا المعالج الخاص بك على منصة طمئن. يمكننا بدء الاستشارة الآن."
+            },
+            "profile": {
+                "title": "تعديل ملفي الشخصي",
+                "doctor_section": "الإعلان المهني",
+                "professional_docs": "المؤهلات والمستندات",
+                "bio": "السيرة الذاتية المهنية",
+                "specialty": "التخصص",
+                "availability": "المواعيد المتاحة",
+                "location": "موقع العيادة",
+                "consultation_mode": "طريقة الاستشارة",
+                "cv_label": "السيرة الذاتية (CV)",
+                "cert_label": "الشهادات / الدبلومات",
+                "no_doc": "لم يتم تحميل أي مستند",
+                "view_doc": "عرض المستند",
+                "submit": "حفظ التغييرات",
+                "success": "تم تحديث الملف الشخصي بنجاح",
+                "error": "خطأ في تحديث الملف الشخصي",
+                "auth_error": "كلمة المرور الحالية مطلوبة",
+                "back": "العودة إلى لوحة القيادة",
+                "mode_online": "أونلاين فقط",
+                "mode_office": "في العيادة فقط",
+                "mode_both": "كلاهما (أونلاين وفي العيادة)"
             },
             "form": {
                 "send": "إرسال",
@@ -686,19 +935,63 @@
             },
             "prescription": {
                 "title": "وصفة طبية",
+                "modal_title": "وصفة طبية جديدة",
+                "modal_subtitle": "يمكنك الجمع بين أقسام متعددة",
+                "tabs": {
+                    "medicines": "الأدوية",
+                    "pdf": "ملف PDF",
+                    "exercises": "تمارين"
+                },
+                "placeholders": {
+                    "med_name": "اسم الدواء (مثلاً: باراسيتامول)",
+                    "med_dosage": "الجرعة (مثلاً: 500 ملغ)",
+                    "med_duration": "المدة (مثلاً: 7 أيام)",
+                    "med_notes": "ملاحظات (مثلاً: بعد الأكل)",
+                    "ex_title": "عنوان التمرين (مثلاً: مشي يومي)",
+                    "ex_freq": "التكرار (مثلاً: 3 مرات/أسبوع)",
+                    "ex_duration": "المدة (مثلاً: 30 دقيقة)",
+                    "ex_desc": "وصف مفصل / تعليمات",
+                    "general_instructions": "مثلاً: ينصح بالراحة، تجنب الرياضة العنيفة، شرب الكثير من الماء..."
+                },
                 "add_medicine": "إضافة دواء",
+                "add_exercise": "إضافة تمرين",
+                "upload_title": "تحميل وصفة PDF",
+                "upload_desc": "ملف PDF موجود (مسح ضوئي، وصفة رقمية...)",
+                "choose_file": "اختر ملفاً",
+                "pdf_ready": "PDF جاهز للإرسال",
+                "instructions_label": "تعليمات عامة",
+                "save": "حفظ الوصفة",
+                "submit": "إرسال",
+                "download": "تحميل PDF",
+                "generate_pdf": "إنشاء PDF",
+                "view_pdf": "عرض PDF",
+                "print": "طباعة",
+                "pdf_attached": "مستند PDF مرفق من قبل الطبيب",
+                "no_prescriptions": "لم يتم العثور على وصفات.",
+                "receipt_summary": "تم استلام وصفة طبية جديدة",
+                "receipt_meds": "دواء (أدوية)",
+                "receipt_ex": "تمرين (تمارين)",
+                "receipt_pdf": "PDF مرفق",
+                "receipt_footer": "تحقق من مساحة المريض الخاصة بك للحصول على التفاصيل.",
+                "label_medicines": "الأدوية والعلاج",
+                "label_exercises": "التوصيات العلاجية",
+                "label_instructions": "تعليمات إضافية",
+                "label_signature": "التوقيع والختم",
+                "digital_cert": "مستند رقمي معتمد من قبل",
+                "platform_name": "منصة الصحة النفسية",
                 "medicine_name": "اسم الدواء",
                 "dosage": "الجرعة",
-                "duration": "المدة (أيام)",
-                "notes": "تعليمات الاستخدام",
-                "instructions": "تعليمات عامة",
-                "save": "حفظ الوصفة",
-                "download": "تحميل PDF",
-                "upload_pdf": "بديل: تحميل PDF",
-                "pdf_ready": "PDF جاهز للإرسال",
-                "view_pdf": "عرض PDF",
-                "generate_pdf": "إنشاء ملف PDF",
-                "doc_attached": "مستند PDF مرفق من قبل الطبيب"
+                "duration": "المدة"
+            },
+            "notifications": {
+                "request_sent": "تم إرسال الدعوة! سيقوم الطبيب بقبولها حتى تتمكن من التحدث معه.",
+                "error_sending": "خطأ في إرسال الرسالة",
+                "prescription_success": "تم إرسال الوصفة بنجاح!",
+                "select_patient_first": "يرجى اختيار مريض أولاً.",
+                "call_incoming": "مكالمة فيديو واردة!",
+                "call_incoming_btn": "📞 مكالمة واردة! انقر على الزر الأخضر.",
+                "generating_doc": "جاري إنشاء المستند...",
+                "doc_ready": "المستند جاهز!"
             }
         },
         "profile": {
@@ -714,7 +1007,7 @@
             "success": "تم تحديث الملف الشخصي بنجاح",
             "error": "خطأ في تحديث الملف الشخصي",
             "auth_error": "كلمة المرور الحالية غير صحيحة",
-            "doctor_section": "الإعلان المهني",
+            "doctor_section": "الملف المهني",
             "bio": "السيرة الذاتية / الوصف المهني",
             "specialty": "التخصص",
             "location": "الموقع",
@@ -756,21 +1049,25 @@
             "cancel": "إلغاء",
             "close": "إغلاق",
             "save": "حفظ",
-            "loading": "جاري التحميل..."
+            "loading": "جاري التحميل...",
+        "prod_notice": "تم تحسين الهندسة الحالية (Polling/WhatsApp) من أجل التكلفة والاستقرار. تتطلب الهجرة للوقت الفعلي (WebSocket/WebRTC) استضافة Cloud/VPS متميزة بتكاليف إضافية.",
+            "delete": "حذف",
+            "edit": "تعديل",
+            "view": "عرض"
         },
         "services": {
             "title": "خدماتنا",
             "subtitle": "حلول مصممة خصيصاً لاحتياجاتك من أجل رفاهيتك النفسية",
-            "individual_title": "علاج فردي",
-            "individual_desc": "دعم مخصص مع أخصائيين نفسيين مؤهلين لمساعدتك على التغلب على التحديات الشخصية وتحقيق أهدافك.",
-            "couple_title": "علاج للأزواج",
-            "couple_desc": "عزز علاقتك وحسن تواصلك من خلال جلسات العلاج الزوجي مع أخصائيين ذوي خبرة.",
-            "family_title": "علاج عائلي",
-            "family_desc": "خلق بيئة عائلية متناغمة وحل النزاعات بمساعدة معالجينا العائليين المهنيين."
+            "individual_title": "التدخل المعرفي السلوكي.",
+            "individual_desc": "المحتوى: جلسات تركز على تعزيز المرونة النفسية وتطوير استراتيجيات التكيف الناضجة لضمان استعادة التوازن النفسي.",
+            "couple_title": "ديناميكية الارتباط والتواصل.",
+            "couple_desc": "المحتوى: تحليل أنماط الارتباط العاطفي ومعالجة الجمود التفاعلي بين الشريكين.",
+            "family_title": "الاتزان والضبط النسقي.",
+            "family_desc": "المحتوى: دراسة التفاعلات الأسرية وإعادة رسم الحدود النفسية بين الأفراد. نسعى لتصحيح الأدوار داخل النسق الأسري وتوفير بيئة نمو صحية ومستقرة."
         },
         "about": {
             "title": "حولنا",
-            "desc1": "منصتنا هي منصة مبتكرة تسهل الوصول إلى رعاية نفسية عالية الجودة. مهمتنا هي جعل الدعم النفسي متاحاً للجميع، في كل مكان وفي أي وقت.",
+            "desc1": "منصة طمئن هي منصة مبتكرة تسهل الوصول إلى رعاية نفسية عالية الجودة. مهمتنا في طمئن هي جعل الدعم النفسي متاحاً للجميع، في كل مكان وفي أي وقت.",
             "desc2": "نحن نتعاون مع أخصائيين نفسيين معتمدين وذوي خبرة يلتزمون بتقديم دعم مهني وسري ورحيم.",
             "stats": {
                 "patients": "مريض راضٍ",
@@ -783,7 +1080,13 @@
             "rights": "جميع الحقوق محفوظة.",
             "made_with": "صنع بـ ❤️ بواسطة ياسين قدري.",
             "company": "الشركة",
-            "support": "الدعم"
+            "support": "الدعم",
+            "team": "فريقنا",
+            "careers": "الوظائف",
+            "blog": "المدونة",
+            "help_center": "مركز المساعدة",
+            "privacy": "سياسة الخصوصية",
+            "terms": "الشروط والأحكام"
         },
         "booking": {
             "book_btn": "حجز موعد",
@@ -798,14 +1101,14 @@
         },
         "mood": {
             "title": "كيف حالك اليوم؟",
-            "subtitle": "تتبع مسار عافيتك",
-            "log_success": "تم تسجيل حالتك المزاجية بنجاح!",
-            "chart_title": "منحنى الرفاهية الخاص بك",
+            "subtitle": "تتبع رحلة رفاهيتك",
+            "log_success": "تم تسجيل الحالة المزاجية بنجاح!",
+            "chart_title": "منحنى رفاهيتك",
             "history": "الحالات المزاجية الأخيرة",
             "levels": {
-                "super": "ممتاز",
+                "super": "رائع",
                 "good": "جيد",
-                "neutral": "عادي",
+                "neutral": "متوسط",
                 "sad": "حزين",
                 "very_sad": "سيء جداً"
             }
@@ -813,10 +1116,17 @@
         "dashboard": {
             "welcome": "مرحباً بك،",
             "next_appointment": "الموعد القادم",
-            "latests_prescriptions": "أحدث الوصفات",
-            "find_doctor": "ابحث عن أخصائي",
+            "latests_prescriptions": "آخر الوصفات",
+            "find_doctor": "البحث عن أخصائي",
             "no_upcoming": "لا توجد مواعيد قادمة",
-            "view_all": "عرض الكل"
+            "view_all": "عرض الكل",
+            "search_patient": "البحث عن مريض...",
+            "loading": "جاري تحميل البيانات..."
+        },
+        "assessment": {
+            "title": "اختبار التقييم السريع",
+            "subtitle": "تحقق من حالتك العقلية في دقيقتين.",
+            "cta": "ابدأ الاختبار"
         }
     }
 }

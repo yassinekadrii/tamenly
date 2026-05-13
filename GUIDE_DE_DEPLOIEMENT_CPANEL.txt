@@ -1,0 +1,110 @@
+🚀 GUIDE DE DÉPLOIEMENT PSYCONNECT SUR CPANEL
+===========================================
+
+Ce guide complet contient toutes les étapes pour installer, configurer et lancer la plateforme PsyConnect en production.
+
+---
+
+1. PRÉREQUIS ET PRÉPARATION
+---------------------------
+- Accès cPanel fonctionnel.
+- Nom de domaine configuré avec SSL (HTTPS).
+- Node.js version 18.x ou supérieure.
+- Fichiers du projet (sans node_modules).
+
+---
+
+2. ÉTAPE 1 : BASE DE DONNÉES (MySQL)
+------------------------------------
+1. Allez dans "Bases de données MySQL®" sur cPanel.
+2. Créez une base (ex: `votreuser_psyconnect`).
+3. Créez un utilisateur (ex: `votreuser_admin`) et notez le mot de passe.
+4. Ajoutez l'utilisateur à la base avec TOUTES les permissions.
+5. Importation via phpMyAdmin :
+   - Sélectionnez la base.
+   - Onglet "Importer".
+   - Choisissez le fichier : `db/schema.sql`.
+   - Cliquez sur "Exécuter".
+
+---
+
+3. ÉTAPE 2 : APPLICATION NODE.JS
+--------------------------------
+1. Dans cPanel > "Setup Node.js App" :
+   - Cliquez sur "Create Application".
+   - Version : 18.x (recommandé).
+   - Mode : Production.
+   - Application Root : Dossier de vos fichiers (ex: `psyconnect`).
+   - Application URL : Votre domaine (ex: `https://votre-site.com`).
+   - Startup file : `server.js`.
+2. Cliquez sur "Create".
+
+---
+
+4. ÉTAPE 3 : TRANSFERT DES FICHIERS
+-----------------------------------
+1. Compressez votre projet local (excluez `node_modules`, `.git` et les fichiers `.log`).
+2. Dans le "Gestionnaire de fichiers" cPanel, allez dans le dossier de l'app.
+3. Téléchargez le ZIP et extrayez-le à la racine du dossier de l'app.
+4. Vérifiez que le dossier `public/` est bien présent.
+
+---
+
+5. ÉTAPE 4 : CONFIGURATION (.env)
+---------------------------------
+Créez un fichier `.env` à la racine de l'application avec ces valeurs :
+
+PORT=3001
+NODE_ENV=production
+JWT_SECRET=TumminSecureKey2026ProtiumMars
+JWT_EXPIRE=7d
+
+# Configuration MySQL (EXACT PRODUCTION VALUES)
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_USER=xwqgvsdy_tummin_user
+MYSQL_PASS=Protiummars2026
+MYSQL_DB=xwqgvsdy_tummin_db
+
+---
+
+6. ÉTAPE 5 : INSTALLATION ET DÉMARRAGE
+--------------------------------------
+1. Dans "Setup Node.js App", cliquez sur "Run NPM Install".
+2. Une fois fini, cliquez sur "Restart".
+3. Testez l'URL : `https://votre-site.com/api/health`.
+
+---
+
+7. ÉTAPE 6 : INITIALISATION DES COMPTES
+---------------------------------------
+Pour créer les comptes par défaut, utilisez "Execute Command" dans cPanel ou SSH :
+Commande : `node scripts/seedAdmin.js`
+
+Accès par défaut :
+- Admin : admin / admin
+- Docteur : mohammed / 1
+- Patient : patient1 / 1
+
+---
+
+8. FONCTIONNALITÉS CLÉS À VÉRIFIER
+----------------------------------
+- Consultation Hub : Les docteurs peuvent contacter les patients via WhatsApp directement.
+- Ordonnances : Génération de prescriptions PDF, exercices et médicaments (Ordre : Exercice - PDF - Médicament).
+- Terminologie Clinique : Support CBT (TCC), Dynamique de l'Attachement et Approche Systémique.
+- Suivi Patient : Accès aux humeurs et tests d'évaluation en temps réel.
+- Interface Premium : Icônes FontAwesome cliniques et design moderne.
+
+---
+
+9. RÉSUMÉ DES ACCÈS (HANDOVER)
+------------------------------
+- URL Site : https://tamenly.com
+- Dossier Public : /public
+- Database : MySQL (db/schema.sql)
+- Support : Protium Agency (Yassine Kadri)
+
+---
+Dernière mise à jour : 13 Mai 2026
+Généré par Antigravity AI

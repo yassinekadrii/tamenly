@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <title>Tableau de Bord - طمئن</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -180,19 +181,22 @@
     <nav class="navbar">
         <a href="index.html" class="logo">طمئن</a>
         <div class="nav-links">
+            <a href="index.html" data-i18n="nav.accueil">Accueil</a>
+            <a href="patient-consultations.html" data-i18n="nav.dashboard">Chat</a>
             <a href="patient-appointments.html" data-i18n="nav.appointments">Rendez-vous</a>
-            <a href="patient-chat.html" data-i18n="nav.accueil">Chat</a>
             <div class="user-profile">
-                <span id="userNameDisplay" style="font-weight: 600;">...</span>
-                <img id="userAvatarDisplay" src="" class="avatar-sm" onerror="this.src='https://ui-avatars.com/api/?name=User&background=6366f1&color=fff'">
-                <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+                <a href="profile.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <span id="userNameDisplay" style="font-weight: 600;">...</span>
+                    <img id="userAvatarDisplay" src="" class="avatar-sm" onerror="this.src='https://ui-avatars.com/api/?name=User&background=6366f1&color=fff'">
+                </a>
+                <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer; margin-left: 1rem;"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-container">
         <div class="welcome-section">
-            <h1 id="welcomeText">Bonjour !</h1>
+            <h1 id="welcomeText" data-i18n="dashboard.welcome">Bonjour !</h1>
             <p data-i18n="mood.subtitle">Suivez votre parcours de bien-être</p>
         </div>
 
@@ -210,7 +214,15 @@
                         <button class="mood-btn" onclick="logMood(-2, 'Terrible', '😫')" title="Terrible">😫</button>
                     </div>
                 </div>
-
+                
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> <span data-i18n="mood.chart_title">Courbe de bien-être</span></div>
+                    </div>
+                    <div style="height: 250px;">
+                        <canvas id="moodChart"></canvas>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Column: Quick Status -->
@@ -229,7 +241,7 @@
                 <!-- Preliminary Assessment -->
                 <div class="card" style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border: none;">
                     <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                        <div style="font-size: 1.5rem;">🧠</div>
+                        <div style="font-size: 1.5rem;"><i class="fas fa-brain"></i></div>
                         <div>
                             <h3 style="margin:0; font-size: 1.1rem;" data-i18n="assessment.title">Test d'Évaluation Rapide</h3>
                             <p style="margin:0.2rem 0 0; font-size: 0.85rem; opacity: 0.9;" data-i18n="assessment.subtitle">Faites le point sur votre état mental en 2 minutes.</p>
@@ -244,7 +256,7 @@
                         <div class="card-title"><i class="fas fa-file-prescription" style="color:#f59e0b;"></i> <span data-i18n="dashboard.latests_prescriptions">Dernières ordonnances</span></div>
                     </div>
                     <div id="latestPrescriptionContainer">
-                         <p style="color:var(--text-muted); font-size:0.9rem;">Chargement...</p>
+                         <p style="color:var(--text-muted); font-size:0.9rem;" data-i18n="common.loading">Chargement...</p>
                     </div>
                 </div>
 
@@ -277,6 +289,8 @@
         }
 
         // ─── Mood Logic ───
+        let moodChartInstance = null;
+
         async function logMood(score, label, emoji) {
             try {
                 // UI Highlight
@@ -290,11 +304,74 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showNotification('Humeur enregistrée !', 'success');
+                    showNotification(getNestedTranslation(currentLang, 'mood.log_success') || 'Humeur enregistrée !', 'success');
                     loadMoodHistory(); // Refresh chart
                 }
             } catch (e) {
-                showNotification('Erreur', 'error');
+                console.error('Mood error:', e);
+                showNotification(getNestedTranslation(currentLang, 'common.error') || 'Erreur', 'error');
+            }
+        }
+
+        async function loadMoodHistory() {
+            try {
+                const res = await fetch(`${API}/moods/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (!data.success || !data.moods || data.moods.length === 0) return;
+
+                const canvas = document.getElementById('moodChart');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                // Sort by date ascending for the chart
+                const sortedMoods = [...data.moods].reverse();
+                
+                const labels = sortedMoods.map(m => new Date(m.date).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'fr-FR', { day: 'numeric', month: 'short' }));
+                const scores = sortedMoods.map(m => m.score);
+
+                if (moodChartInstance) moodChartInstance.destroy();
+
+                moodChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: getNestedTranslation(currentLang, 'mood.chart_title') || 'Bien-être',
+                            data: scores,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#6366f1',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                min: -2,
+                                max: 2,
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) {
+                                        const emojis = { '2': '🤩', '1': '😊', '0': '😐', '-1': '😔', '-2': '😫' };
+                                        return emojis[value] || value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Chart error:', e);
             }
         }
 
@@ -324,7 +401,7 @@
                 }
             } catch(e) {}
 
-            // Latest Prescription
+            // Latest Prescriptions
             try {
                 const res = await fetch(`${API}/prescriptions/patient/${user.id || user._id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -333,16 +410,15 @@
                 const container = document.getElementById('latestPrescriptionContainer');
                 
                 if (data.prescriptions && data.prescriptions.length > 0) {
-                    const p = data.prescriptions[0];
-                    container.innerHTML = `
-                        <a href="patient-chat.html" class="summary-card">
+                    container.innerHTML = data.prescriptions.slice(0, 3).map(p => `
+                        <a href="patient-consultations.html" class="summary-card" style="margin-bottom: 0.8rem;">
                             <div class="summary-icon" style="background:#fef3c7; color:#92400e;"><i class="fas fa-file-medical"></i></div>
                             <div>
                                 <div style="font-weight:700; font-size:0.95rem;">Dr. ${p.doctor.lastName}</div>
                                 <div style="font-size:0.8rem; color:var(--text-muted);">${new Date(p.createdAt).toLocaleDateString('fr-FR')}</div>
                             </div>
                         </a>
-                    `;
+                    `).join('');
                 } else {
                     container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Aucune ordonnance reçue.</p>';
                 }
@@ -351,10 +427,7 @@
 
         // Init
         loadDashboardData();
+        loadMoodHistory();
     </script>
 </body>
-</html>
-
-</body>
-
 </html>

@@ -12,7 +12,8 @@
     "psychology",
     "health",
     "express",
-    "mongodb"
+    "mysql",
+    "sql"
   ],
   "author": "Yassine Kadri",
   "license": "ISC",
@@ -24,10 +25,8 @@
     "express-rate-limit": "^8.3.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongo-sanitize": "^1.1.0",
-    "mongoose": "^8.0.0",
     "multer": "^2.1.1",
-    "nodemailer": "^8.0.2",
+    "mysql2": "^3.22.2",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

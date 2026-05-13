@@ -13,6 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="description" content="Inscription - Créez votre compte">
     <title>Inscription</title>
     <link
@@ -130,7 +131,7 @@
         }
 
         .logo img {
-            height: 60px;
+            height: 80px;
             width: auto;
             display: block;
             margin: 0 auto 1rem;
@@ -411,57 +412,7 @@
             .social-login {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Verification Section */
-        #verificationSection {
-            display: none;
-        }
-
-        .otp-inputs {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-
-        .otp-input {
-            width: 45px;
-            height: 55px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: var(--white);
-            transition: all 0.3s ease;
-        }
-
-        .otp-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        .resend-container {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        .resend-link {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .resend-link.disabled {
-            color: #cbd5e1;
-            cursor: not-allowed;
-            text-decoration: none;
-        }
+                /* Verification Section Removed */    }
     </style>
     <script src="js/i18n.js"></script>
     <script src="js/notifications.js"></script>
@@ -544,30 +495,7 @@
                 <button type="submit" class="btn-register" data-i18n="register.submit">Créer mon compte</button>
             </form>
 
-            <!-- Verification Section -->
-            <div id="verificationSection">
-                <div class="form-header">
-                    <h2 data-i18n="verify.title">Vérifiez votre email</h2>
-                    <p data-i18n="verify.subtitle">Nous avons envoyé un code à 6 chiffres à <span id="displayEmail"
-                            style="font-weight: 600; color: var(--text-dark);"></span></p>
-                </div>
-
-                <div class="otp-inputs">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                    <input type="text" class="otp-input" maxlength="1" pattern="\d*">
-                </div>
-
-                <button type="button" class="btn-register" id="btnVerify" onclick="handleVerify()">Vérifier</button>
-
-                <div class="resend-container">
-                    <span data-i18n="verify.no_code">Vous n'avez pas reçu de code ?</span>
-                    <a class="resend-link" id="resendCode" onclick="handleResendOTP()">Renvoyer</a>
-                </div>
-            </div>
+            <!-- Verification Section Removed -->
 
             <div class="login-link">
                 <span data-i18n="register.has_account">Vous avez déjà un compte ?</span> <a href="login.html"
@@ -641,7 +569,7 @@
 
             const submitBtn = document.querySelector('.btn-register');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading-spinner"></span> Inscription...';
+            submitBtn.innerHTML = `<span class="loading-spinner"></span> ${getNestedTranslation(currentLang, 'common.loading')}`;
 
             try {
                 const response = await fetch(`${API_URL}/auth/register`, {
@@ -655,15 +583,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showNotification('Compte créé ! Veuillez vérifier votre email.', 'success');
+                    showNotification('Inscription réussie ! Redirection...', 'success');
+                    
+                    // Store token and redirect
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
 
-                    // Switch UI to verification
-                    document.getElementById('registerForm').style.display = 'none';
-                    document.getElementById('verificationSection').style.display = 'block';
-                    document.getElementById('displayEmail').textContent = email;
-
-                    // Setup OTP inputs
-                    setupOTPInputs();
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
                 } else {
                     showNotification(data.message || 'Erreur lors de l\'inscription', 'error');
                     submitBtn.disabled = false;
@@ -677,107 +605,7 @@
             }
         });
 
-        function setupOTPInputs() {
-            const inputs = document.querySelectorAll('.otp-input');
-            inputs.forEach((input, index) => {
-                input.addEventListener('input', (e) => {
-                    if (e.target.value.length === 1 && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
-                    }
-                });
-
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                        inputs[index - 1].focus();
-                    }
-                });
-            });
-        }
-
-        async function handleVerify() {
-            const inputs = document.querySelectorAll('.otp-input');
-            const otp = Array.from(inputs).map(input => input.value).join('');
-            const email = document.getElementById('displayEmail').textContent;
-
-            if (otp.length !== 6) {
-                showNotification('Veuillez entrer le code à 6 chiffres.', 'error');
-                return;
-            }
-
-            const btnVerify = document.getElementById('btnVerify');
-            btnVerify.disabled = true;
-            btnVerify.textContent = 'Vérification...';
-
-            try {
-                const response = await fetch(`${API_URL}/auth/verify-email`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, otp })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showNotification('Email vérifié avec succès !', 'success');
-                    // Store token and redirect
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-
-                    setTimeout(() => window.location.href = 'index.html', 1500);
-                } else {
-                    showNotification(data.message || 'Code incorrect', 'error');
-                    btnVerify.disabled = false;
-                    btnVerify.textContent = 'Vérifier';
-                }
-            } catch (error) {
-                console.error('Verify error:', error);
-                showNotification('Erreur de connexion.', 'error');
-                btnVerify.disabled = false;
-                btnVerify.textContent = 'Vérifier';
-            }
-        }
-
-        async function handleResendOTP() {
-            const email = document.getElementById('displayEmail').textContent;
-            const resendLink = document.getElementById('resendCode');
-
-            if (resendLink.classList.contains('disabled')) return;
-
-            try {
-                const response = await fetch(`${API_URL}/auth/resend-otp`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showNotification('Nouveau code envoyé !', 'success');
-                    // Simple countdown
-                    resendLink.classList.add('disabled');
-                    let timeLeft = 60;
-                    const timer = setInterval(() => {
-                        timeLeft--;
-                        resendLink.textContent = `Attendre (${timeLeft}s)`;
-                        if (timeLeft <= 0) {
-                            clearInterval(timer);
-                            resendLink.classList.remove('disabled');
-                            resendLink.textContent = 'Renvoyer';
-                        }
-                    }, 1000);
-                } else {
-                    showNotification(data.message || 'Erreur lors de l\'envois', 'error');
-                }
-            } catch (error) {
-                console.error('Resend error:', error);
-                showNotification('Erreur de connexion.', 'error');
-            }
-        }
+        // OTP logic removed
     </script>
 </body>
 

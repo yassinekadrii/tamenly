@@ -3,7 +3,6 @@ const router = express.Router();
 const Assessment = require('../models/Assessment');
 const { auth } = require('../middleware/auth');
 
-// All assessment routes require authentication
 router.use(auth);
 
 // @route   POST /api/assessments
@@ -17,22 +16,20 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Réponses invalides.' });
         }
 
-        // Calculate total score and status (Simplified logic for demo)
         const totalScore = responses.reduce((acc, curr) => acc + (curr.score || 0), 0);
         let status = 'normal';
         if (totalScore >= 15) status = 'severe';
         else if (totalScore >= 10) status = 'moderate';
         else if (totalScore >= 5) status = 'mild';
 
-        const assessment = new Assessment({
-            patient: req.user.id,
-            doctor: doctorId || null,
+        const assessment = await Assessment.create({
+            patientId: req.user.id,
+            doctorId: doctorId || null,
             responses,
             totalScore,
             status
         });
 
-        await assessment.save();
         res.status(201).json({ success: true, assessment });
     } catch (error) {
         console.error('Error submitting assessment:', error);
@@ -45,9 +42,7 @@ router.post('/', async (req, res) => {
 // @access  Patient
 router.get('/my', async (req, res) => {
     try {
-        const assessments = await Assessment.find({ patient: req.user.id })
-            .populate('doctor', 'firstName lastName specialty')
-            .sort({ createdAt: -1 });
+        const assessments = await Assessment.findByPatient(req.user.id);
         res.json({ success: true, assessments });
     } catch (error) {
         console.error('Error fetching assessments:', error);
@@ -63,9 +58,7 @@ router.get('/patient/:patientId', async (req, res) => {
         if (req.user.role !== 'doctor' && req.user.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Non autorisé' });
         }
-
-        const assessments = await Assessment.find({ patient: req.params.patientId })
-            .sort({ createdAt: -1 });
+        const assessments = await Assessment.findByPatient(req.params.patientId);
         res.json({ success: true, assessments });
     } catch (error) {
         console.error('Error fetching patient assessments:', error);

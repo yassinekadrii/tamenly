@@ -1,5 +1,5 @@
 <!-- 
-  @file public/patient-chat.html
+  @file public/patient-consultations.html
   @description Patient-side interface for communicating with doctors.
   
   Integrates:
@@ -13,6 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <title data-i18n="chat.sidebar.title">Mes Discussions - طمئن</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="js/i18n.js"></script>
@@ -644,6 +645,110 @@
             animation: pulse-emerald 2s infinite;
             border: 2px solid #fff !important;
         }
+
+        /* Consultation Hub Styles */
+        .consultation-hub {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background: #f8fafc;
+            overflow-y: auto;
+        }
+
+        .hub-empty-state {
+            margin: auto;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .hub-empty-state .avatar-lg {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.2;
+        }
+
+        .hub-content {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .doctor-profile-card, .patient-profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hub-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f1f5f9;
+        }
+
+        .specialty-badge, .status-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .hub-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid transparent;
+        }
+
+        .hub-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #6366f1;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .whatsapp-card .card-icon { background: #dcfce7; color: #16a34a; }
+        .prescription-card .card-icon { background: #e0e7ff; color: #4338ca; }
+
+        .card-info { flex: 1; }
+        .card-info h3 { margin-bottom: 0.25rem; font-size: 1.1rem; }
+        .card-info p { color: #64748b; font-size: 0.9rem; }
+
+        .btn-go { font-size: 1.2rem; color: #cbd5e1; }
     </style>
 </head>
 
@@ -652,6 +757,7 @@
         <a href="index.html" class="logo">طمئن</a>
         <div class="nav-links">
             <a href="index.html" data-i18n="nav.accueil">Accueil</a>
+            <a href="patient-dashboard.html" data-i18n="nav.dashboard">Tableau de bord</a>
             <button onclick="logout()" class="btn-logout" data-i18n="nav.logout">Déconnexion</button>
         </div>
     </nav>
@@ -674,6 +780,10 @@
                             style="text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
                             <span>🏠</span> <span data-i18n="nav.accueil">Accueil</span>
                         </a>
+                        <a href="patient-dashboard.html"
+                            style="text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                            <span>📊</span> <span data-i18n="nav.dashboard">Tableau de bord</span>
+                        </a>
                         <button onclick="logout()" class="btn-logout"
                             style="width: 100%; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
                             <span>🚪</span> <span data-i18n="nav.logout">Déconnexion</span>
@@ -684,13 +794,13 @@
 
                 <div class="sidebar-title-wrapper"
                     style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <span data-i18n="chat.sidebar.title" style="font-weight: 700;">Vos Discussions</span>
+                    <span data-i18n="chat.sidebar.title" style="font-weight: 700;">Mes Médecins</span>
                     <!-- Desktop Only Close Indicator if needed? No, let's keep it simple -->
                 </div>
             </div>
             <div class="doctor-list" id="doctorList">
                 <div style="padding: 2rem; color: var(--text-muted); text-align: center; font-size: 0.9rem;" data-i18n="chat.sidebar.loading_chats">
-                    Chargement des discussions...
+                    Chargement des médecins...
                 </div>
             </div>
         </div>
@@ -703,7 +813,7 @@
                     <img src="https://ui-avatars.com/api/?name=Doctor&background=6366f1&color=fff" alt="Doctor"
                         class="avatar" id="chatDoctorAvatar" style="opacity: 0.3;">
                     <div class="header-text">
-                        <h3 id="chatDoctorName" data-i18n="chat.header.select_doctor">Sélectionnez un médecin</h3>
+                        <h3 id="chatDoctorName">Sélectionnez un médecin</h3>
                         <span style="color: var(--text-muted); font-size: 0.8rem;" id="statusText">...</span>
                     </div>
                 </div>
@@ -711,72 +821,35 @@
                     <button id="prescriptionToggleBtn" class="btn-action" onclick="openPrescriptionsModal()" style="display: none;">
                         <span class="icon">📜</span> <span data-i18n="chat.header.view_prescriptions">Ordonnances</span>
                     </button>
-                    <button class="btn-action" id="audioCallBtn" onclick="joinAudioCall()" style="display: none; background: #8b5cf6; color: white;">
-                        <span class="icon">📞</span> <span data-i18n="chat.header.audio_call">Audio</span>
-                    </button>
-                    <button class="btn-action" id="videoCallBtn" onclick="joinVideoCall()" style="display: none; background: #10b981; color: white;">
-                        <span class="icon">📹</span> <span data-i18n="chat.header.video_call">Vidéo</span>
+                    <button class="btn-action" id="whatsappBtn" onclick="openWhatsApp()" style="display: none; background: #25d366; color: white;">
+                        <span class="icon">💬</span> <span data-i18n="chat.header.whatsapp">WhatsApp</span>
                     </button>
                 </div>
             </div>
 
-            <div class="messages-container" id="messagesContainer">
-                <div class="no-chat-selected">
-                    <div class="avatar-lg">DO</div>
+            <div class="consultation-hub" id="consultationHub">
+                <div class="hub-empty-state" id="hubEmptyState">
+                    <div class="avatar-lg">💬</div>
                     <h3 data-i18n="chat.header.select_doctor">Sélectionnez un médecin</h3>
-                    <p data-i18n="chat.sidebar.no_patients_desc">... contactez un spécialiste depuis l'accueil pour commencer.</p>
+                    <p>Choisissez un médecin dans la liste pour accéder à la consultation et à vos ordonnances.</p>
                 </div>
-            </div>
+                
+                <div class="hub-content" id="hubContent" style="display: none;">
+                    <div class="doctor-profile-card">
+                        <img id="hubDoctorAvatar" src="" alt="Doctor" class="hub-avatar">
+                        <h2 id="hubDoctorName"></h2>
+                        <p id="hubDoctorSpecialty" class="specialty-badge"></p>
+                    </div>
 
-            <div id="prescriptionPanel" style="display: none;"></div>
-
-            <div id="connectionOverlay" style="display: none; padding: 1.5rem; background: var(--bg-light); border-top: 1px solid var(--border); text-align: center; flex-direction: column; align-items: center; gap: 1rem;">
-                <p id="connectionMsg" style="font-weight: 500; color: var(--text-main);"></p>
-                <button id="requestBtn" onclick="requestConnection()" class="btn-action" style="display: none; background: var(--primary); color: white; padding: 0.75rem 2rem; border-radius: 8px;">
-                    Demander l'accès au chat
-                </button>
-            </div>
-
-            <div class="input-area" id="inputArea">
-                <div class="msg-input-wrapper">
-                    <input type="text" id="messageInput" class="msg-input" placeholder="Écrivez votre message..."
-                        data-i18n="chat.form.placeholder" onkeypress="handleKeyPress(event)" disabled>
+                    <div class="action-cards" id="hubActionCards">
+                        <!-- Action cards will be injected here dynamically by selectDoctor -->
+                    </div>
                 </div>
-                <button id="sendBtn" class="send-btn" onclick="sendMessage()" disabled>
-                    <svg viewBox="0 0 24 24">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-                    </svg>
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Video Call Modal -->
-    <div id="videoModal" class="modal-overlay" style="background: rgba(0,0,0,0.9);">
-        <div class="modal-content" style="background: #000; border: none; max-width: 900px;">
-            <div style="position: relative; width: 100%; height: 100%; aspect-ratio: 16/9;">
-                <video id="remoteVideo" autoplay playsinline
-                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"></video>
-                <div id="audioPlaceholder" 
-                    style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; background: #1e293b; border-radius: 12px; position: absolute; top:0; left:0;">
-                    <div style="font-size: 5rem; margin-bottom: 1rem;">📞</div>
-                    <div style="color: white; font-size: 1.2rem; font-weight: 500;" data-i18n="chat.header.audio_call">Appel Audio...</div>
-                </div>
-                <video id="localVideo" autoplay playsinline muted
-                    style="position: absolute; bottom: 20px; right: 20px; width: 160px; height: 90px; object-fit: cover; border: 2px solid white; border-radius: 8px; box-shadow: var(--shadow-lg);"></video>
-                <div
-                    style="position: absolute; top: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;" data-i18n="chat.header.consultation_ongoing">
-                    Consultation en cours
-                </div>
-            </div>
-            <div style="padding: 1.5rem; display: flex; justify-content: center;">
-                <button onclick="endCall()" class="btn-logout" style="padding: 1rem 2.5rem; border-radius: 50px;"
-                    data-i18n="chat.header.hang_up">
-                    Raccrocher
-                </button>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Prescriptions Modal -->
     <div id="prescriptionsModal" class="modal-overlay">
@@ -791,9 +864,8 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/webrtc.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <!-- Audio for ringtone -->
     <audio id="ringtone" loop>
         <source src="https://assets.mixkit.co/active_storage/sfx/1359/1359-preview.mp3" type="audio/mp3">
@@ -824,41 +896,29 @@
         }
 
         // Initialize
-        initChat();
+        function initChat() {
+            fetchConversations();
 
-        async function initChat() {
-            // 1. Fetch existing conversations
-            await fetchConversations();
-
-            // 2. Check if coming from "Contact" button
-            const selectedDoctor = JSON.parse(localStorage.getItem('selectedDoctor'));
-            if (selectedDoctor) {
-                // Select this doctor immediately
-                selectDoctor({
-                    _id: selectedDoctor.id,
-                    firstName: selectedDoctor.name.split(' ')[0], // Approx
-                    lastName: selectedDoctor.name.split(' ').slice(1).join(' ') || ''
-                }, true); // force selection
-            }
-
-            // Join global user room for notifications
-            socket.emit('join-user-room', user.id || user._id);
-
-            // Listen for new messages
-            socket.on('receive-message', (msg) => {
-                console.log('New message received via socket:', msg);
-                if (currentReceiverId && (msg.sender === currentReceiverId || msg.receiver === currentReceiverId)) {
-                    const container = document.getElementById('messagesContainer');
-                    if (currentMessagesCount === 0) container.innerHTML = '';
-                    
-                    appendMessageElement(container, msg);
-                    currentMessagesCount++;
-                    lastMessageId = msg._id || msg.id;
-                    container.scrollTop = container.scrollHeight;
+            // Polling for new messages and conversations
+            setInterval(() => {
+                if (currentReceiverId) {
+                    loadMessages(currentReceiverId);
                 }
                 fetchConversations();
-            });
+            }, 10000); // Every 10 seconds
+
+            // Auto-select doctor if redirected from profile/home
+            const selectedDoctor = JSON.parse(localStorage.getItem('selectedDoctor'));
+            if (selectedDoctor && selectedDoctor.id) {
+                selectDoctor({ 
+                    _id: selectedDoctor.id, 
+                    firstName: selectedDoctor.name.split(' ')[0], 
+                    lastName: selectedDoctor.name.split(' ').slice(1).join(' ') || '' 
+                });
+            }
         }
+
+        initChat();
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -878,7 +938,7 @@
                 const connData = await connRes.json();
 
                 if (convData.success && connData.success) {
-                    renderSidebar(convData.conversations, connData.connections.filter(c => c.status === 'accepted'));
+                    renderSidebar(convData.conversations, connData.connections.filter(c => c.status !== 'blocked'));
                 }
             } catch (error) {
                 console.error('Error fetching conversations:', error);
@@ -901,7 +961,7 @@
                 if (!convMap.has(doctorId)) {
                     mergedList.push({
                         user: conn.doctor,
-                        lastMessage: 'Nouveau médecin (pas encore de message)',
+                        lastMessage: 'Nouveau médecin',
                         isNew: true,
                         timestamp: conn.updatedAt || conn.createdAt
                     });
@@ -917,9 +977,10 @@
                         user: {
                             _id: selectedDoctor.id,
                             firstName: selectedDoctor.name.split(' ')[0],
-                            lastName: selectedDoctor.name.split(' ').slice(1).join(' ') || ''
+                            lastName: selectedDoctor.name.split(' ').slice(1).join(' ') || '',
+                            phone: selectedDoctor.phone
                         },
-                        lastMessage: 'Nouvelle discussion',
+                        lastMessage: 'Nouveau médecin',
                         isNew: true,
                         timestamp: new Date().toISOString()
                     });
@@ -927,7 +988,7 @@
             }
 
             if (mergedList.length === 0) {
-                list.innerHTML = '<div style="padding: 2rem; color: var(--text-muted); text-align: center; font-size: 0.9rem;">Aucune discussion.</div>';
+                list.innerHTML = '<div style="padding: 2rem; color: var(--text-muted); text-align: center; font-size: 0.9rem;">Aucun médecin.</div>';
                 return;
             }
 
@@ -938,14 +999,17 @@
             mergedList.forEach(item => {
                 const isActive = currentReceiverId && currentReceiverId.toString() === item.user._id.toString() ? 'active' : '';
                 const avatarSrc = item.user.profilePicture || `https://ui-avatars.com/api/?name=${item.user.firstName}+${item.user.lastName}&background=6366f1&color=fff`;
-                const lastMsgSnippet = item.isNew ? `<span style="color: var(--primary); font-weight: 500;">${item.lastMessage}</span>` : escapeHTML(item.lastMessage);
+                const rawMsg = item.lastMessage || 'Nouveau médecin';
+                const truncatedMsg = rawMsg.length > 30 ? rawMsg.substring(0, 30) + '...' : rawMsg;
+                const safeMsg = escapeHTML(truncatedMsg);
+                const lastMsgSnippet = item.isNew ? `<span style="color: var(--primary); font-weight: 500;">${safeMsg}</span>` : safeMsg;
                 
                 html += `
-                    <div class="doctor-item ${isActive}" onclick="selectDoctorFromSidebar('${item.user._id}', '${escapeHTML(item.user.firstName)}', '${escapeHTML(item.user.lastName)}')">
+                    <div class="doctor-item ${isActive}" onclick="selectDoctorFromSidebar('${item.user._id}', '${escapeHTML(item.user.firstName)}', '${escapeHTML(item.user.lastName)}', '${item.user.phone || ''}')">
                         <img src="${avatarSrc}" alt="Doctor" class="avatar">
                         <div class="doctor-info">
                             <div class="doctor-name">Dr. ${escapeHTML(item.user.firstName)} ${escapeHTML(item.user.lastName)}</div>
-                            <div class="last-msg">${lastMsgSnippet.substring(0, 30)}${lastMsgSnippet.length > 30 ? '...' : ''}</div>
+                            <div class="last-msg">${lastMsgSnippet}</div>
                         </div>
                     </div>
                 `;
@@ -954,20 +1018,13 @@
         }
 
         // Helper for onclick in HTML string
-        window.selectDoctorFromSidebar = (id, firstName, lastName) => {
-            selectDoctor({ _id: id, firstName, lastName });
+        window.selectDoctorFromSidebar = (id, firstName, lastName, phone) => {
+            selectDoctor({ _id: id, firstName, lastName, phone: phone || '' });
         };
 
         async function selectDoctor(doctor, isNew = false) {
             currentReceiverId = doctor._id;
-
-            // Reset message tracking when switching doctors
-            currentMessagesCount = 0;
-            lastMessageId = null;
-            document.getElementById('messagesContainer').innerHTML = '';
-            
-            // Hide prescription panel by default
-            document.getElementById('prescriptionPanel').style.display = 'none';
+            window.currentDoctorPhone = doctor.phone;
 
             // Update Header
             document.getElementById('chatDoctorName').textContent = `Dr. ${doctor.firstName} ${doctor.lastName}`;
@@ -991,63 +1048,48 @@
                 const msg = document.getElementById('connectionMsg');
                 const reqBtn = document.getElementById('requestBtn');
                 const inputArea = document.getElementById('inputArea') || document.querySelector('.input-area');
-                const videoBtn = document.getElementById('videoCallBtn');
-                const audioBtn = document.getElementById('audioCallBtn');
+                const meetBtn = document.getElementById('meetBtn');
                 const prescToggleBtn = document.getElementById('prescriptionToggleBtn');
 
                 if (data.success) {
                     const connection = data.connections.find(c => c.doctor._id.toString() === doctor._id.toString());
                     const status = connection ? connection.status : 'none';
 
-                    if (status === 'none') {
-                        if(overlay) overlay.style.display = 'flex';
-                        if(msg) msg.textContent = getNestedTranslation(currentLang, 'chat.header.no_connection') || "Vous n'êtes pas encore connecté à ce médecin.";
-                        if(reqBtn) reqBtn.style.display = 'block';
-                        if(inputArea) inputArea.style.display = 'none';
-                        if(videoBtn) videoBtn.style.display = 'none';
-                        if(audioBtn) audioBtn.style.display = 'none';
-                        if(prescToggleBtn) prescToggleBtn.style.display = 'none';
-                    } else if (status === 'pending') {
-                        if(overlay) overlay.style.display = 'flex';
-                        if(msg) msg.textContent = getNestedTranslation(currentLang, 'chat.header.pending_approval') || "Votre demande de connexion est en attente d'acceptation.";
-                        if(reqBtn) reqBtn.style.display = 'none';
-                        if(inputArea) inputArea.style.display = 'none';
-                        if(videoBtn) videoBtn.style.display = 'none';
-                        if(audioBtn) audioBtn.style.display = 'none';
-                        if(prescToggleBtn) prescToggleBtn.style.display = 'none';
+                    if (status === 'none' || status === 'pending' || status === 'accepted') {
+                        document.getElementById('hubEmptyState').style.display = 'none';
+                        document.getElementById('hubContent').style.display = 'flex';
+                        
+                        document.getElementById('hubDoctorName').textContent = `Dr. ${doctor.firstName} ${doctor.lastName}`;
+                        document.getElementById('hubDoctorSpecialty').textContent = doctor.specialty || 'Psychologue Clinicien';
+                        document.getElementById('hubDoctorAvatar').src = avatarSrc;
+
+                        const actionCards = document.getElementById('hubActionCards');
+                        actionCards.innerHTML = `
+                            <div class="hub-card whatsapp-card" onclick="openWhatsApp()">
+                                <div class="card-icon">💬</div>
+                                <div class="card-info">
+                                    <h3>WhatsApp</h3>
+                                    <p>Démarrer la consultation vidéo ou audio</p>
+                                </div>
+                                <span class="btn-go">➔</span>
+                            </div>
+                            <div class="hub-card prescription-card" onclick="openPrescriptionsModal()">
+                                <div class="card-icon">📜</div>
+                                <div class="card-info">
+                                    <h3>Mes Ordonnances</h3>
+                                    <p>Consulter et télécharger vos prescriptions</p>
+                                </div>
+                                <span class="btn-go">➔</span>
+                            </div>
+                        `;
                     } else if (status === 'blocked') {
-                        if(overlay) overlay.style.display = 'flex';
-                        if(msg) msg.textContent = getNestedTranslation(currentLang, 'chat.header.blocked_by_doctor') || "Vous avez été bloqué par ce médecin.";
-                        if(reqBtn) reqBtn.style.display = 'none';
-                        if(inputArea) inputArea.style.display = 'none';
-                        if(videoBtn) videoBtn.style.display = 'none';
-                        if(audioBtn) audioBtn.style.display = 'none';
-                        if(prescToggleBtn) prescToggleBtn.style.display = 'none';
-                    } else if (status === 'accepted') {
-                        if(overlay) overlay.style.display = 'none';
-                        if(inputArea) inputArea.style.display = 'flex';
-                        if(prescToggleBtn) prescToggleBtn.style.display = 'flex';
-                        document.getElementById('messageInput').disabled = false;
-                        document.getElementById('sendBtn').disabled = false;
-                        document.getElementById('messageInput').focus();
+                        document.getElementById('hubEmptyState').style.display = 'flex';
+                        document.getElementById('hubContent').style.display = 'none';
+                        document.getElementById('hubEmptyState').innerHTML = `<h3>Accès bloqué</h3><p>Vous ne pouvez plus accéder à cette consultation.</p>`;
                     }
                 }
             } catch (error) {
                 console.error('Error fetching connection status:', error);
-            }
-
-            // Join Signaling Room for Call Notifications
-            const userId = user.id || user._id;
-            const participants = [userId, doctor._id].sort();
-            const roomId = participants.join('-');
-            socket.emit('join-room', roomId, userId);
-
-            // Load messages
-            loadMessages(currentReceiverId);
-
-            // Hide sidebar on mobile after selection
-            if (window.innerWidth <= 768) {
-                toggleSidebar();
             }
 
             fetchConversations();
@@ -1072,7 +1114,8 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    renderPrescriptionList(data.prescriptions);
+                    const filteredPrescriptions = data.prescriptions.filter(p => p.doctor && p.doctor._id.toString() === currentReceiverId.toString());
+                    renderPrescriptionList(filteredPrescriptions);
                 }
             } catch (error) {
                 console.error('Error fetching prescriptions:', error);
@@ -1125,7 +1168,7 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showNotification('Invitation envoyée ! Le médecin va l\'accepter pour que vous puissiez lui parler.', 'success', 5000);
+                    showNotification(getNestedTranslation(currentLang, 'chat.notifications.request_sent'), 'success', 5000);
                     // Refresh UI
                     const doctorObj = { _id: currentReceiverId, firstName: document.getElementById('chatDoctorName').textContent.replace('Dr. ', '').split(' ')[0], lastName: document.getElementById('chatDoctorName').textContent.replace('Dr. ', '').split(' ')[1] };
                     selectDoctor(doctorObj);
@@ -1137,173 +1180,67 @@
             }
         }
 
-        async function loadMessages(userId) {
-            try {
-                const response = await fetch(`${API_URL}/messages/${userId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    const container = document.getElementById('messagesContainer');
-
-                    if (data.messages.length === 0) {
-                        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Démarrez la conversation...</div>';
-                        currentMessagesCount = 0;
-                        lastMessageId = null;
-                        return;
-                    }
-
-                    const newLastMsg = data.messages[data.messages.length - 1];
-                    const newLastId = newLastMsg._id || newLastMsg.id;
-
-                    // If same count and same last ID, skip update
-                    if (data.messages.length === currentMessagesCount && newLastId === lastMessageId) {
-                        return;
-                    }
-
-                    // If it's a new conversation or messages were deleted, rebuild
-                    if (currentMessagesCount === 0 || data.messages.length < currentMessagesCount) {
-                        container.innerHTML = '';
-                        data.messages.forEach(msg => appendMessageElement(container, msg));
-                    } else {
-                        // Append only new messages
-                        const newMessages = data.messages.slice(currentMessagesCount);
-                        newMessages.forEach(msg => appendMessageElement(container, msg));
-                    }
-
-                    currentMessagesCount = data.messages.length;
-                    lastMessageId = newLastId;
-                    container.scrollTop = container.scrollHeight;
-                }
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
-        }
-
-        function appendMessageElement(container, msg) {
-            const div = document.createElement('div');
-            const myId = (user.id || user._id || '').toString();
-            const senderId = (msg.sender._id || msg.sender || '').toString();
-            div.className = `message ${senderId === myId ? 'sent' : 'received'}`;
-            div.textContent = msg.content;
-            container.appendChild(div);
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const content = input.value.trim();
-
-            if (content && currentReceiverId) {
-                try {
-                    const response = await fetch(`${API_URL}/messages`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            receiverId: currentReceiverId,
-                            content
-                        })
-                    });
-
-                    if (response.ok) {
-                        input.value = '';
-                        loadMessages(currentReceiverId);
-                        fetchConversations(); // Update sidebar list order
-                    } else {
-                        const data = await response.json();
-                        const errMsg = data.debug ? `${data.message} (${data.debug})` : (data.message || 'Erreur lors de l\'envoi du message');
-                        showNotification(errMsg, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                    showNotification('Erreur lors de l\'envoi du message', 'error');
-                }
-            }
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function joinVideoCall() {
-            startJoinCall('video');
-        }
-
-        function joinAudioCall() {
-            startJoinCall('audio');
-        }
-
-        function startJoinCall(type) {
+        async function openWhatsApp() {
             if (!currentReceiverId) return;
 
-            const userId = user.id || user._id;
-            const participants = [userId, currentReceiverId].sort();
-            const roomId = participants.join('-');
+            // Log the contact event so the doctor can see it
+            fetch(`${API_URL}/connections/log-contact/${currentReceiverId}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            }).catch(() => {}); // silent — don't block the WhatsApp open
 
-            // Stop ringtone if playing
-            const ringtone = document.getElementById('ringtone');
-            if (ringtone) {
-                ringtone.pause();
-                ringtone.currentTime = 0;
-            }
-
-            console.log(`Attempting to join ${type} call with doctor:`, currentReceiverId);
+            // Fallback to selectedDoctor from localStorage or window state
+            const selectedDoctor = JSON.parse(localStorage.getItem('selectedDoctor') || '{}');
+            let phoneToUse = window.currentDoctorPhone;
             
-            // Notify doctor if we are the one initiating
-            socket.emit('start-call', { roomId, type, receiverId: currentReceiverId });
-
-            startCallSession(roomId, userId, { video: type === 'video', audio: true });
-        }
-
-        // Listen for incoming calls
-        socket.on('call-started', (data) => {
-            console.log('Incoming call event received:', data);
-
-            // Verify if this call is for current conversation
-            const userId = user.id || user._id;
-            if (!currentReceiverId) return;
-
-            const participants = [userId, currentReceiverId].sort();
-            const currentRoomId = participants.join('-');
-
-            if (data.roomId === currentRoomId) {
-                // Show the appropriate call button
-                if (data.type === 'audio') {
-                    document.getElementById('audioCallBtn').style.display = 'flex';
-                    document.getElementById('videoCallBtn').style.display = 'none';
-                } else {
-                    document.getElementById('videoCallBtn').style.display = 'flex';
-                    document.getElementById('audioCallBtn').style.display = 'none';
-                }
-
-                // Add pulse animation to the active button
-                const activeBtn = data.type === 'audio' ? document.getElementById('audioCallBtn') : document.getElementById('videoCallBtn');
-                if (activeBtn) {
-                    activeBtn.classList.add('pulse-animation');
-                    // Set text to Rejoindre explicitly
-                    const btnText = activeBtn.querySelector('[data-i18n]');
-                    if (btnText) btnText.textContent = "Rejoindre";
-                }
-
-                // Play ringtone
-                const ringtone = document.getElementById('ringtone');
-                if (ringtone) {
-                    ringtone.play().catch(e => {
-                        console.log('Audio play failed (maybe need interaction)', e);
-                        // Fallback: show a more intrusive notification
-                        showNotification('📞 APPEL VIDÉO ENTRANT ! Cliquez sur le bouton vert.', 'info');
-                    });
-                }
-
-                showNotification('📞 Appel vidéo entrant !', 'info');
+            if (!phoneToUse && selectedDoctor && String(selectedDoctor.id) === String(currentReceiverId)) {
+                phoneToUse = selectedDoctor.phone;
             }
-        });
 
-        function endCall() {
-            endCallSession();
+            if (phoneToUse) {
+                const whatsappMsg = encodeURIComponent("Bonjour Dr., je vous contacte via PsyConnect pour notre consultation.");
+                const whatsappUrl = `https://wa.me/${phoneToUse.replace(/\s+/g, '').replace('+', '')}?text=${whatsappMsg}`;
+                window.open(whatsappUrl, '_blank');
+                return;
+            }
+
+            // If not found in memory, try to fetch from all doctors
+            try {
+                const res = await fetch(`${API_URL}/patient/doctors`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    const doc = data.doctors.find(d => String(d._id) === String(currentReceiverId) || String(d.id) === String(currentReceiverId));
+                    if (doc && doc.phone) {
+                        window.currentDoctorPhone = doc.phone;
+                        const whatsappMsg = encodeURIComponent("Bonjour Dr., je vous contacte via PsyConnect pour notre consultation.");
+                        const whatsappUrl = `https://wa.me/${doc.phone.replace(/\s+/g, '').replace('+', '')}?text=${whatsappMsg}`;
+                        window.open(whatsappUrl, '_blank');
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch doctor phone', err);
+            }
+
+            // Fallback to connections API
+            fetch(`${API_URL}/connections`, { headers: { 'Authorization': `Bearer ${token}` } })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const conn = data.connections.find(c => c.doctor._id.toString() === currentReceiverId.toString());
+                        if (conn && conn.doctor.phone) {
+                            const whatsappMsg = encodeURIComponent("Bonjour Dr., je vous contacte via PsyConnect pour notre consultation.");
+                            const whatsappUrl = `https://wa.me/${conn.doctor.phone.replace(/\s+/g, '').replace('+', '')}?text=${whatsappMsg}`;
+                            window.open(whatsappUrl, '_blank');
+                        } else {
+                            showNotification("Le numéro de téléphone du médecin n'est pas disponible.", 'error');
+                        }
+                    } else {
+                        showNotification("Le numéro de téléphone du médecin n'est pas disponible.", 'error');
+                    }
+                }).catch(() => {
+                    showNotification("Erreur lors de la récupération du numéro.", 'error');
+                });
         }
 
         // Prescription Functions
@@ -1326,15 +1263,17 @@
 
                 const container = document.getElementById('prescriptionsList');
                 if (data.success) {
-                    if (data.prescriptions.length === 0) {
-                        container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">Aucune ordonnance trouvée.</p>';
+                    const filteredPrescriptions = data.prescriptions.filter(p => p.doctor && p.doctor._id.toString() === currentReceiverId.toString());
+
+                    if (filteredPrescriptions.length === 0) {
+                        container.innerHTML = `<p style="text-align: center; color: var(--text-light); padding: 2rem;" data-i18n="chat.prescription.no_prescriptions">${getNestedTranslation(currentLang, 'chat.prescription.no_prescriptions')}</p>`;
                         return;
                     }
 
                     // Store prescriptions for PDF generation
-                    window.currentPrescriptions = data.prescriptions;
+                    window.currentPrescriptions = filteredPrescriptions;
 
-                    container.innerHTML = data.prescriptions.map(p => {
+                    container.innerHTML = filteredPrescriptions.map(p => {
                         const hasMedicines = p.medicines && p.medicines.length > 0;
                         const hasPdf = p.pdf && (p.pdf.length > 0 || p.pdf.startsWith('data:'));
                         const hasExercises = p.exercises && p.exercises.length > 0;
@@ -1398,18 +1337,18 @@
                             ${hasPdf ? `
                                 <div style="margin-bottom: 1rem; padding: 0.75rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 6px; display: flex; align-items: center; gap: 0.5rem; color: #065f46;">
                                     <span>📄</span>
-                                    <span style="font-size: 0.9rem; font-weight: 600;">Document PDF joint par le médecin</span>
+                                    <span data-i18n="chat.prescription.pdf_attached">${getNestedTranslation(currentLang, 'chat.prescription.pdf_attached')}</span>
                                 </div>
                             ` : ''}
 
                             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap;">
                                  ${hasPdf ? `
-                                    <button onclick="viewUploadedPDF('${p._id}')" style="font-size: 0.85rem; background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">👁️ Voir PDF</button>
+                                    <button onclick="viewUploadedPDF('${p._id}')" style="font-size: 0.85rem; background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;"><span style="margin-right:0.3rem;">👁️</span><span data-i18n="chat.prescription.view_pdf">${getNestedTranslation(currentLang, 'chat.prescription.view_pdf')}</span></button>
                                  ` : ''}
                                  ${hasMedicines || hasExercises ? `
-                                    <button onclick="downloadPrescriptionPDF('${p._id}')" style="font-size: 0.85rem; background: var(--primary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">📄 Générer PDF</button>
+                                    <button onclick="downloadPrescriptionPDF('${p._id}')" style="font-size: 0.85rem; background: var(--primary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;"><span style="margin-right:0.3rem;">📄</span><span data-i18n="chat.prescription.generate_pdf">${getNestedTranslation(currentLang, 'chat.prescription.generate_pdf')}</span></button>
                                  ` : ''}
-                                 <button onclick="window.print()" style="font-size: 0.85rem; background: white; border: 1px solid var(--border-color); color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">🖨️ Imprimer</button>
+                                 <button onclick="downloadPrescriptionPDF('${p._id}', true)" style="font-size: 0.85rem; background: white; border: 1px solid var(--border-color); color: var(--text-dark); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;"><span style="margin-right:0.3rem;">🖨️</span><span data-i18n="chat.prescription.print">${getNestedTranslation(currentLang, 'chat.prescription.print')}</span></button>
                             </div>
                         </div>
                     `}).join('');
@@ -1423,73 +1362,93 @@
         }
 
         async function viewUploadedPDF(id) {
-            const presc = window.currentPrescriptions.find(p => p._id === id);
+            const presc = window.currentPrescriptions.find(p => String(p._id) === String(id));
             if (!presc || !presc.pdf) return;
 
             const win = window.open();
             win.document.write('<iframe src="' + presc.pdf + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
         }
 
-        async function downloadPrescriptionPDF(id) {
-            const presc = window.currentPrescriptions.find(p => p._id === id);
+        async function downloadPrescriptionPDF(id, isPrint = false) {
+            const presc = window.currentPrescriptions.find(p => String(p._id) === String(id));
             if (!presc) return;
 
             const element = document.createElement('div');
             element.style.padding = '40px';
             element.style.fontFamily = 'Inter, sans-serif';
+            element.style.color = '#1e293b';
+            element.style.background = 'white';
+            element.style.width = '100%';
+            element.style.maxWidth = '750px';
+
             element.innerHTML = `
-                <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #6366f1; padding-bottom: 20px;">
-                    <h1 style="color: #6366f1; margin: 0;">طمئن</h1>
-                    <p style="color: #64748b; margin-top: 5px;">Ordonnance Médicale</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #6366f1; padding-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <h1 style="color: #6366f1; margin: 0; font-size: 2.2rem; font-family: 'Cairo', sans-serif;">طمئن</h1>
+                        <p style="color: #64748b; margin-top: 2px; font-weight: 500; font-size: 0.9rem;">${getNestedTranslation(currentLang, 'chat.prescription.platform_name')}</p>
+                    </div>
+                    <div style="text-align: right; flex: 1;">
+                        <h2 style="margin: 0; font-size: 1.1rem; color: #1e293b; letter-spacing: 0.02em;">${getNestedTranslation(currentLang, 'chat.prescription.title')}</h2>
+                        <p style="margin: 5px 0 0; color: #64748b; font-size: 0.85rem; font-weight: 600;">Réf: #${presc._id}</p>
+                    </div>
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
-                    <div>
-                        <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Médecin :</p>
-                        <h3 style="margin: 5px 0;">Dr. ${presc.doctor.firstName} ${presc.doctor.lastName}</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 50px;">
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <p style="margin: 0; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Médecin Traitant</p>
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b;">Dr. ${presc.doctor.firstName} ${presc.doctor.lastName}</h3>
+                        <p style="margin: 5px 0 0; color: #64748b; font-size: 0.85rem;">Psychologue Clinicien</p>
                     </div>
-                    <div style="text-align: right;">
-                        <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Date :</p>
-                        <h3 style="margin: 5px 0;">${new Date(presc.createdAt).toLocaleDateString('fr-FR')}</h3>
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <p style="margin: 0; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Patient</p>
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b;">${user.firstName} ${user.lastName}</h3>
+                        <p style="margin: 5px 0 0; color: #64748b; font-size: 0.85rem;">Date: ${new Date(presc.createdAt).toLocaleDateString('fr-FR')}</p>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 30px;">
-                    <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Patient :</p>
-                    <h3 style="margin: 5px 0;">${user.firstName} ${user.lastName}</h3>
-                </div>
-
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-                    <thead>
-                        <tr style="background: #f8fafc; text-align: left; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 12px 10px;">Médicament</th>
-                            <th style="padding: 12px 10px;">Dosage</th>
-                            <th style="padding: 12px 10px;">Durée</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${presc.medicines.map(m => `
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 12px 10px;">
-                                    <div style="font-weight: 600;">${m.name}</div>
-                                    ${m.notes ? `<div style="font-size: 0.85rem; color: #10b981; margin-top: 4px;">Instruction : ${m.notes}</div>` : ''}
-                                </td>
-                                <td style="padding: 12px 10px;">${m.dosage}</td>
-                                <td style="padding: 12px 10px;">${m.duration}</td>
+                ${presc.medicines && presc.medicines.length > 0 ? `
+                <div style="margin-bottom: 40px;">
+                    <h4 style="color: #6366f1; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem;">💊</span> ${getNestedTranslation(currentLang, 'chat.prescription.label_medicines')}
+                    </h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: left; border-bottom: 2px solid #e2e8f0;">
+                                <th style="padding: 12px 15px; font-size: 0.85rem; color: #475569;">${getNestedTranslation(currentLang, 'chat.prescription.medicine_name')}</th>
+                                <th style="padding: 12px 15px; font-size: 0.85rem; color: #475569;">${getNestedTranslation(currentLang, 'chat.prescription.dosage')}</th>
+                                <th style="padding: 12px 15px; font-size: 0.85rem; color: #475569;">${getNestedTranslation(currentLang, 'chat.prescription.duration')}</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${presc.medicines.map(m => `
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 15px;">
+                                        <div style="font-weight: 700; color: #1e293b;">${m.name}</div>
+                                        ${m.notes ? `<div style="font-size: 0.8rem; color: #10b981; margin-top: 4px; font-style: italic;">📝 Note: ${m.notes}</div>` : ''}
+                                    </td>
+                                    <td style="padding: 15px; color: #475569; font-weight: 500;">${m.dosage}</td>
+                                    <td style="padding: 15px; color: #475569;">${m.duration}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
 
                 ${presc.exercises && presc.exercises.length > 0 ? `
-                    <div style="margin-top: 30px;">
-                        <h4 style="color: #6366f1; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Exercices recommandé</h4>
-                        <div style="display: grid; gap: 10px; margin-top: 10px;">
+                    <div style="margin-top: 30px; margin-bottom: 40px;">
+                        <h4 style="color: #6366f1; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">🏃</span> ${getNestedTranslation(currentLang, 'chat.prescription.label_exercises')}
+                        </h4>
+                        <div style="display: grid; gap: 12px;">
                             ${presc.exercises.map(ex => `
-                                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                                    <div style="font-weight: 700;">${ex.title}</div>
-                                    <div style="font-size: 0.85rem; color: #64748b;">Fréquence: ${ex.frequency} | Durée: ${ex.duration}</div>
-                                    ${ex.description ? `<div style="font-size: 0.85rem; margin-top: 5px; color: #1e293b;">${ex.description}</div>` : ''}
+                                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #6366f1; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+                                    <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">${ex.title}</div>
+                                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: flex; gap: 15px;">
+                                        <span>⏱️ <strong>Durée:</strong> ${ex.duration}</span>
+                                        <span>🔄 <strong>Fréquence:</strong> ${ex.frequency}</span>
+                                    </div>
+                                    ${ex.description ? `<div style="font-size: 0.85rem; margin-top: 8px; color: #334155; line-height: 1.5; padding-top: 8px; border-top: 1px dashed #e2e8f0;">${ex.description}</div>` : ''}
                                 </div>
                             `).join('')}
                         </div>
@@ -1497,26 +1456,95 @@
                 ` : ''}
 
                 ${presc.instructions ? `
-                    <div style="margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 8px;">
-                        <p style="margin: 0 0 10px 0; color: #64748b; font-size: 0.9rem;">Commentaires du médecin :</p>
-                        <p style="margin: 0; line-height: 1.6;">${presc.instructions}</p>
+                    <div style="margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <p style="margin: 0 0 10px 0; color: #64748b; font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">${getNestedTranslation(currentLang, 'chat.prescription.label_instructions')} :</p>
+                        <p style="margin: 0; line-height: 1.6; color: #1e293b;">${presc.instructions}</p>
                     </div>
                 ` : ''}
 
-                <div style="margin-top: 60px; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                    Cette ordonnance a été générée électroniquement sur طمئن.
+                <div style="margin-top: 80px; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div style="font-size: 0.75rem; color: #94a3b8; max-width: 300px;">
+                        ${getNestedTranslation(currentLang, 'chat.prescription.digital_cert')} Dr. ${presc.doctor.firstName} ${presc.doctor.lastName}.
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 150px; height: 1px; background: #e2e8f0; margin-bottom: 10px;"></div>
+                        <p style="margin: 0; font-size: 0.85rem; font-weight: 600; color: #475569;">${getNestedTranslation(currentLang, 'chat.prescription.label_signature')}</p>
+                        <p style="margin: 5px 0 0; font-size: 0.75rem; color: #94a3b8;">(Document validé numériquement)</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; text-align: center; font-size: 0.75rem; color: #cbd5e1; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+                    طمئن - Plateforme de Psychologie et Soutien Moral | www.tummin.com
                 </div>
             `;
 
             const opt = {
-                margin: 0,
+                margin: [0.5, 0.5],
                 filename: `Ordonnance_${new Date(presc.createdAt).toLocaleDateString('fr-CA')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
+                html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save();
+            showNotification(getNestedTranslation(currentLang, 'chat.notifications.generating_doc'), 'info');
+
+            try {
+                // 1. Generate HTML PDF as array buffer
+                const pdfArrayBuffer = await html2pdf().set(opt).from(element).output('arraybuffer');
+                
+                let finalPdfBytes = new Uint8Array(pdfArrayBuffer);
+
+                // 2. Check for attached PDF and merge if exists
+                if (presc.pdf && presc.pdf.includes('base64,')) {
+                    console.log('Detected attached PDF, attempting merge...');
+                    try {
+                        const { PDFDocument } = PDFLib;
+                        const mainPdfDoc = await PDFDocument.load(pdfArrayBuffer);
+                        
+                        const attachedPdfBase64 = presc.pdf.split('base64,')[1];
+                        const attachedPdfBytes = Uint8Array.from(atob(attachedPdfBase64), c => c.charCodeAt(0));
+                        const attachedPdfDoc = await PDFDocument.load(attachedPdfBytes);
+                        
+                        const copiedPages = await mainPdfDoc.copyPages(attachedPdfDoc, attachedPdfDoc.getPageIndices());
+                        copiedPages.forEach((page) => mainPdfDoc.addPage(page));
+                        
+                        finalPdfBytes = await mainPdfDoc.save();
+                        console.log('Successfully merged PDFs');
+                    } catch (mergeError) {
+                        console.error('Error merging PDFs:', mergeError);
+                        showNotification('Note: Impossible de fusionner le PDF joint, seule l\'ordonnance générée sera téléchargée.', 'warning', 5000);
+                    }
+                }
+
+                // 3. Output result
+                const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+
+                if (isPrint) {
+                    const printWin = window.open(url, '_blank');
+                    if (printWin) {
+                        printWin.onload = () => {
+                            printWin.print();
+                        };
+                    } else {
+                        // If popup blocked, just download
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = opt.filename;
+                        link.click();
+                    }
+                } else {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = opt.filename;
+                    link.click();
+                }
+                
+                showNotification(getNestedTranslation(currentLang, 'chat.notifications.doc_ready'), 'success');
+            } catch (err) {
+                console.error('PDF Generation Error:', err);
+                showNotification('Erreur lors de la génération du PDF.', 'error');
+            }
         }
 
         function logout() {

@@ -9,9 +9,7 @@ const {
     login,
     getMe,
     updateProfile,
-    updatePassword,
-    verifyEmail,
-    resendOTP
+    updatePassword
 } = require('../controllers/authController');
 const { auth } = require('../middleware/auth');
 
@@ -41,15 +39,5 @@ router.put('/profile', auth, updateProfile);
 // @desc    Update password
 // @access  Private
 router.put('/password', auth, updatePassword);
-
-// @route   POST /api/auth/verify-email
-// @desc    Verify email with OTP
-// @access  Public
-router.post('/verify-email', verifyEmail);
-
-// @route   POST /api/auth/resend-otp
-// @desc    Resend OTP
-// @access  Public
-router.post('/resend-otp', resendOTP);
 
 module.exports = router;

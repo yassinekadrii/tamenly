@@ -5,8 +5,6 @@
 
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const { sendVerificationEmail } = require('../services/emailService');
-const crypto = require('crypto');
 const Attempt = require('../models/Attempt');
 
 /**
@@ -57,7 +55,7 @@ const register = async (req, res) => {
         }
 
         // Check if user already exists
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOneByEmail(email);
         if (existingUser) {
             await logAttempt(req, email, 'register', 'fail', 'Cet email est déjà utilisé');
             return res.status(400).json({
@@ -66,41 +64,30 @@ const register = async (req, res) => {
             });
         }
 
-        // Generate 6-digit OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Create new patient (force role to patient)
-        const user = new User({
+        // Create new patient (force role to patient, auto-verify)
+        const user = await User.create({
             firstName,
             lastName,
             email,
             phone,
             password,
             role: 'patient',
-            verificationOTP: otp,
-            otpExpires: Date.now() + 10 * 60 * 1000 // 10 minutes
+            isVerified: true
         });
 
-        await user.save();
         await logAttempt(req, email, 'register', 'success');
 
-        // Send Email (don't await so registration is fast)
-        sendVerificationEmail(user.email, otp).catch(err => {
-            console.error('Verification email failed:', err);
-            const fs = require('fs');
-            fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] EMAIL FAIL for ${user.email}: ${err.message}\n`);
-        });
-
-        // Generate temporary token (can't access dashboard yet)
-        const token = generateToken(user._id);
+        // Generate token immediately
+        const token = generateToken(user.id);
 
         res.status(201).json({
             success: true,
-            message: 'Inscription réussie. Veuillez vérifier votre email pour le code OTP.',
+            message: 'Inscription réussie.',
             token,
-            isVerified: false,
+            isVerified: true,
             user: {
-                id: user._id,
+                id: user.id,
+                _id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
@@ -135,8 +122,8 @@ const login = async (req, res) => {
             });
         }
 
-        // Find user and include password
-        const user = await User.findOne({ email }).select('+password');
+        // Find user
+        const user = await User.findOneByEmail(email);
 
         if (!user) {
             fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] LOGIN FAIL: User not found: ${email}\n`);
@@ -147,22 +134,10 @@ const login = async (req, res) => {
             });
         }
 
-        // Check if verified
-        if (!user.isVerified) {
-            fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] LOGIN FAIL: Not verified: ${email}\n`);
-            return res.status(403).json({
-                success: false,
-                message: 'Veuillez vérifier votre email avant de vous connecter.',
-                needsVerification: true,
-                email: user.email,
-                id: user._id
-            });
-        }
-
         fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] LOGIN PROCEEDING: Password check for ${email}\n`);
 
         // Check password
-        const isPasswordValid = await user.comparePassword(password);
+        const isPasswordValid = await User.comparePassword(password, user.password);
 
         if (!isPasswordValid) {
             fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] LOGIN FAIL: Invalid password: ${email}\n`);
@@ -175,7 +150,7 @@ const login = async (req, res) => {
 
         fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] LOGIN SUCCESS: ${email}\n`);
         // Generate token
-        const token = generateToken(user._id);
+        const token = generateToken(user.id);
         await logAttempt(req, email, 'login', 'success');
 
         console.log('Login successful, sending response');
@@ -184,7 +159,8 @@ const login = async (req, res) => {
             message: 'Connexion réussie.',
             token,
             user: {
-                id: user._id,
+                id: user.id,
+                _id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
@@ -216,11 +192,12 @@ const login = async (req, res) => {
 const getMe = async (req, res) => {
     try {
         // req.user is already populated by the auth middleware
-        const user = req.user;
+        const user = req.user; // Note: Ensure middleware maps db fields to camelCase or use raw
         res.status(200).json({
             success: true,
             user: {
-                id: user._id,
+                id: user.id,
+                _id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
@@ -260,31 +237,36 @@ const updateProfile = async (req, res) => {
         }
 
         // Update fields if provided
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (phone) user.phone = phone;
-        if (bio !== undefined) user.bio = bio;
-        if (specialty) user.specialty = specialty;
-        if (location) user.location = location;
-        if (consultationMode) user.consultationMode = consultationMode;
+        const updateData = {};
+        if (firstName) updateData.firstName = firstName;
+        if (lastName) updateData.lastName = lastName;
+        if (phone) updateData.phone = phone;
+        if (bio !== undefined) updateData.bio = bio;
+        if (specialty) updateData.specialty = specialty;
+        if (location) updateData.location = location;
+        if (consultationMode) updateData.consultationMode = consultationMode;
 
-        await user.save();
+        await User.update(user.id, updateData);
+
+        // Fetch updated user
+        const updatedUser = await User.findById(user.id);
 
         res.json({
             success: true,
             message: 'Profil mis à jour avec succès',
             user: {
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phone: user.phone,
-                role: user.role,
-                profilePicture: user.profilePicture || '',
-                bio: user.bio || '',
-                specialty: user.specialty || '',
-                location: user.location || '',
-                consultationMode: user.consultationMode || 'online'
+                id: updatedUser.id,
+                _id: updatedUser.id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                email: updatedUser.email,
+                phone: updatedUser.phone,
+                role: updatedUser.role,
+                profilePicture: updatedUser.profilePicture || '',
+                bio: updatedUser.bio || '',
+                specialty: updatedUser.specialty || '',
+                location: updatedUser.location || '',
+                consultationMode: updatedUser.consultationMode || 'online'
             }
         });
     } catch (error) {
@@ -304,15 +286,14 @@ const updatePassword = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Ancien et nouveau mot de passe requis' });
         }
 
-        const user = await User.findById(req.user.id).select('+password');
+        const user = await User.findById(req.user.id);
 
-        const isMatch = await user.comparePassword(currentPassword);
+        const isMatch = await User.comparePassword(currentPassword, user.password);
         if (!isMatch) {
             return res.status(401).json({ success: false, message: 'Mot de passe actuel incorrect' });
         }
 
-        user.password = newPassword;
-        await user.save();
+        await User.updatePassword(user.id, newPassword);
 
         res.json({ success: true, message: 'Mot de passe mis à jour avec succès' });
     } catch (error) {
@@ -321,86 +302,4 @@ const updatePassword = async (req, res) => {
     }
 };
 
-// @desc    Verify email with OTP
-// @route   POST /api/auth/verify-email
-// @access  Public
-const verifyEmail = async (req, res) => {
-    try {
-        const { email, otp } = req.body;
-
-        if (!email || !otp) {
-            return res.status(400).json({ success: false, message: 'Email et OTP requis' });
-        }
-
-        const user = await User.findOne({
-            email,
-            verificationOTP: otp,
-            otpExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            await logAttempt(req, email, 'verify', 'fail', 'OTP invalide ou expiré');
-            return res.status(400).json({ success: false, message: 'Code OTP invalide ou expiré' });
-        }
-
-        user.isVerified = true;
-        user.verificationOTP = undefined;
-        user.otpExpires = undefined;
-        await user.save();
-        await logAttempt(req, email, 'verify', 'success');
-
-        const token = generateToken(user._id);
-
-        res.json({
-            success: true,
-            message: 'Email vérifié avec succès',
-            token,
-            user: {
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                role: user.role
-            }
-        });
-    } catch (error) {
-        console.error('Verify error:', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de la vérification' });
-    }
-};
-
-// @desc    Resend verification OTP
-// @route   POST /api/auth/resend-otp
-// @access  Public
-const resendOTP = async (req, res) => {
-    try {
-        const { email } = req.body;
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
-        }
-
-        if (user.isVerified) {
-            return res.status(400).json({ success: false, message: 'Cet email est déjà vérifié' });
-        }
-
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        user.verificationOTP = otp;
-        user.otpExpires = Date.now() + 10 * 60 * 1000;
-        await user.save();
-
-        await sendVerificationEmail(user.email, otp).catch(err => {
-            console.error('Resend email failed:', err);
-            const fs = require('fs');
-            fs.appendFileSync('api-debug.log', `[${new Date().toISOString()}] RESEND FAIL for ${user.email}: ${err.message}\n`);
-        });
-
-        res.json({ success: true, message: 'Nouveau code envoyé' });
-    } catch (error) {
-        console.error('Resend error:', error);
-        res.status(500).json({ success: false, message: 'Erreur lors de l\'envoi du code' });
-    }
-};
-
-module.exports = { register, login, getMe, updateProfile, updatePassword, verifyEmail, resendOTP };
+module.exports = { register, login, getMe, updateProfile, updatePassword };

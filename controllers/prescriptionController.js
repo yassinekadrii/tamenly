@@ -32,16 +32,14 @@ exports.createPrescription = async (req, res) => {
             });
         }
 
-        const prescription = new Prescription({
-            doctor: req.user.id,
-            patient: patientId,
+        const prescription = await Prescription.create({
+            doctorId: req.user.id,
+            patientId: patientId,
             medicines: medicines || [],
             exercises: exercises || [],
             instructions,
             pdf: pdf || ''
         });
-
-        await prescription.save();
 
         res.status(201).json({
             success: true,
@@ -53,7 +51,8 @@ exports.createPrescription = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Erreur lors de la création de l\'ordonnance.',
-            error: error.message
+            error: error.message,
+            debug: error.message
         });
     }
 };
@@ -66,17 +65,14 @@ exports.getPatientPrescriptions = async (req, res) => {
         const { patientId } = req.params;
 
         // Security check: Either the user is the patient themselves, or a doctor
-        // In a real app, we should check if the doctor is authorized for this patient
-        if (req.user.role !== 'doctor' && req.user.id !== patientId) {
+        if (req.user.role !== 'doctor' && req.user.id != patientId) {
             return res.status(403).json({
                 success: false,
                 message: 'Accès non autorisé.'
             });
         }
 
-        const prescriptions = await Prescription.find({ patient: patientId })
-            .populate('doctor', 'firstName lastName')
-            .sort({ createdAt: -1 });
+        const prescriptions = await Prescription.findByPatientId(patientId);
 
         res.status(200).json({
             success: true,

@@ -1,41 +1,34 @@
 /**
- * @file Mood.js
- * @description Mongoose schema for patient daily mood tracking.
+ * @file models/Mood.js
+ * @description MySQL Data Access Object for patient mood tracking.
  */
 
-const mongoose = require('mongoose');
+const db = require('../db/mysql');
 
-const moodSchema = new mongoose.Schema({
-    patient: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    score: {
-        type: Number,
-        required: true // e.g., -2 to +2
-    },
-    label: {
-        type: String,
-        required: true // e.g., 'Super', 'Triste'
-    },
-    emoji: {
-        type: String,
-        required: true
-    },
-    note: {
-        type: String,
-        default: ''
-    },
-    date: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    timestamps: true
-});
+class Mood {
+  static async create({ patientId, score, label, emoji, note }) {
+    const result = await db.query(
+      'INSERT INTO moods (patient_id, score, label, emoji, note) VALUES (?, ?, ?, ?, ?)',
+      [patientId, score, label, emoji, note || '']
+    );
+    return { id: result.insertId, patient_id: patientId, score, label, emoji, note };
+  }
 
-// Ensure a patient can logs moods, and we can query by date
-moodSchema.index({ patient: 1, date: -1 });
+  static async findByPatient(patientId, limit = 30) {
+    const rows = await db.simpleQuery(
+      'SELECT * FROM moods WHERE patient_id = ? ORDER BY date DESC LIMIT ?',
+      [patientId, Number(limit)]
+    );
+    return rows;
+  }
 
-module.exports = mongoose.model('Mood', moodSchema);
+  static async findLatestByPatient(patientId) {
+    const rows = await db.query(
+      'SELECT * FROM moods WHERE patient_id = ? ORDER BY date DESC LIMIT 1',
+      [patientId]
+    );
+    return rows[0] || null;
+  }
+}
+
+module.exports = Mood;

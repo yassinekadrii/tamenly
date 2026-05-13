@@ -5,19 +5,35 @@
 
 const User = require('../models/User');
 
+// Helper to filter out sensitive info
+const filterDoctorInfo = (doctor) => ({
+    _id: doctor.id, // For backwards compatibility with frontend expecting _id
+    id: doctor.id,
+    firstName: doctor.firstName,
+    lastName: doctor.lastName,
+    specialty: doctor.specialty,
+    bio: doctor.bio,
+    profilePicture: doctor.profilePicture,
+    certification: doctor.certification,
+    cv: doctor.cv,
+    phone: doctor.phone, // Added for WhatsApp integration
+    availability: doctor.availability,
+    location: doctor.location,
+    consultationMode: doctor.consultationMode
+});
+
 // @desc    Get all doctors (public info only)
 // @route   GET /api/patient/doctors
 // @access  Public
 exports.getAllDoctorsPublic = async (req, res) => {
     try {
-        const doctors = await User.find({ role: 'doctor' })
-            .select('firstName lastName specialty bio profilePicture certification cv availability location consultationMode _id')
-            .sort({ createdAt: -1 });
+        const doctors = await User.findDoctors();
+        const filteredDoctors = doctors.map(filterDoctorInfo);
 
         res.json({
             success: true,
-            count: doctors.length,
-            doctors
+            count: filteredDoctors.length,
+            doctors: filteredDoctors
         });
     } catch (error) {
         console.error('Error fetching doctors:', error);
@@ -33,8 +49,7 @@ exports.getAllDoctorsPublic = async (req, res) => {
 // @access  Public
 exports.getDoctorById = async (req, res) => {
     try {
-        const doctor = await User.findOne({ _id: req.params.id, role: 'doctor' })
-            .select('firstName lastName specialty bio profilePicture certification cv availability location consultationMode _id');
+        const doctor = await User.findDoctorById(req.params.id);
 
         if (!doctor) {
             return res.status(404).json({
@@ -45,7 +60,7 @@ exports.getDoctorById = async (req, res) => {
 
         res.json({
             success: true,
-            doctor
+            doctor: filterDoctorInfo(doctor)
         });
     } catch (error) {
         console.error('Error fetching doctor by ID:', error);

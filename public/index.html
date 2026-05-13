@@ -10,13 +10,58 @@
   - About/Contact: Platform information
 -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Plateforme de bien-être mental et de soutien psychologique">
-    <title>Plateforme de Psychologie</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- ✅ PRIMARY SEO TAGS -->
+    <title>طمئن | منصة الدعم النفسي والصحة العقلية - Tamenly</title>
+    <meta name="description" content="منصة طمئن للدعم النفسي - تواصل مع أفضل الأطباء النفسيين واختصاصيي الصحة النفسية. استشارات نفسية عبر الإنترنت بسرية تامة. Plateforme de soutien psychologique en ligne.">
+    <meta name="keywords" content="منصة طمئن, طمئن, دعم نفسي, صحة نفسية, طبيب نفسي, استشارة نفسية, علاج نفسي, صحة عقلية, psychologue, santé mentale, tamenly, tamenly.com, plateforme psychologie">
+    <meta name="author" content="Tamenly - طمئن">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tamenly.com/">
+
+    <!-- ✅ OPEN GRAPH (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tamenly.com/">
+    <meta property="og:title" content="طمئن | منصة الدعم النفسي - Tamenly">
+    <meta property="og:description" content="تواصل مع أخصائيين نفسيين معتمدين عبر منصة طمئن. استشارات آمنة وسرية عبر الإنترنت.">
+    <meta property="og:image" content="https://tamenly.com/images/og-image.png">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:locale:alternate" content="fr_FR">
+    <meta property="og:site_name" content="طمئن - Tummin">
+
+    <!-- ✅ TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tamenly.com/">
+    <meta name="twitter:title" content="طمئن | منصة الدعم النفسي - Tamenly">
+    <meta name="twitter:description" content="تواصل مع أخصائيين نفسيين معتمدين عبر منصة طمئن.">
+    <meta name="twitter:image" content="https://tamenly.com/images/og-image.png">
+
+    <!-- ✅ ARABIC / RTL LANGUAGE SUPPORT -->
+    <meta http-equiv="Content-Language" content="ar, fr, en">
+
+    <!-- ✅ STRUCTURED DATA (JSON-LD for Google) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalOrganization",
+      "name": "طمئن - Tamenly",
+      "alternateName": ["منصة طمئن", "Tamenly Platform", "Plateforme Tamenly"],
+      "url": "https://tamenly.com",
+      "logo": "https://tamenly.com/images/logo.png",
+      "description": "منصة للدعم النفسي والصحة العقلية تربط المرضى بالأطباء النفسيين المعتمدين.",
+      "medicalSpecialty": "Psychiatry",
+      "availableLanguage": ["Arabic", "French", "English"],
+      "sameAs": [
+        "https://tamenly.com"
+      ]
+    }
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Cairo:wght@700&family=Tajawal:wght@700&display=swap"
         rel="stylesheet">
@@ -82,7 +127,7 @@
         }
 
         .logo img {
-            height: 45px;
+            height: 60px;
             width: auto;
             display: block;
         }
@@ -325,6 +370,7 @@
             gap: 2rem;
         }
 
+
         .service-card {
             padding: 2.5rem;
             background: var(--white);
@@ -535,8 +581,8 @@
         }
 
         .social-icon {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
             display: flex;
@@ -544,6 +590,9 @@
             justify-content: center;
             transition: all 0.3s ease;
             cursor: pointer;
+            text-decoration: none;
+            color: var(--white);
+            font-size: 1.4rem;
         }
 
         .social-icon:hover {
@@ -837,17 +886,55 @@
             color: var(--primary-color);
             font-weight: 500;
         }
+        .prod-notice-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(139, 92, 246, 0.9));
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+
+        .prod-notice-banner i {
+            margin-right: 8px;
+        }
+
+        .prod-notice-banner .highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin: 0 4px;
+        }
+
+        @media (max-width: 768px) {
+            .prod-notice-banner {
+                font-size: 0.75rem;
+                padding: 8px 15px;
+            }
+        }
     </style>
     <script src="js/i18n.js"></script>
     <script src="js/notifications.js"></script>
 </head>
 
 <body>
+    <!-- Production Notice Banner -->
+    <div class="prod-notice-banner">
+        <i class="fas fa-info-circle"></i>
+        <span data-i18n="common.prod_notice">Ceci est le socle fonctionnel. Pour une production complète, le déploiement sur Cloud/VPS (AWS/DigitalOcean) avec services séparés est recommandé.</span>
+    </div>
+
     <!-- Navbar -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" style="top: 40px;">
         <div class="nav-container">
             <div class="logo" onclick="window.location.href='index.html'">
-                <img src="images/image.png" alt="Logo">
+                <img src="images/image.png" alt="طمئن - منصة طمئن للدعم النفسي">
             </div>
 
             <ul class="nav-links">
@@ -894,7 +981,7 @@
                     allDoctors = data.doctors;
                     grid.innerHTML = data.doctors.map(doc => {
                         const specialty = doc.specialty || 'Psychologue Clinicien';
-                        const bio = doc.bio || 'Spécialiste de la santé mentale dévoué à votre bien-être.';
+                        const bio = doc.bio || getNestedTranslation(currentLang, 'chat.sidebar.new_doctor');
                         const profilePic = doc.profilePicture || `https://ui-avatars.com/api/?name=${doc.firstName}+${doc.lastName}&background=6366f1&color=fff`;
 
                         return `
@@ -912,20 +999,20 @@
                                 <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: auto;">
                                     <button onclick="openDoctorProfile('${doc._id}')" 
                                              class="btn-secondary" 
-                                             style="flex: 1; padding: 0.8rem; border-radius: 50px; font-weight: 600;">
-                                        Profil
+                                             style="flex: 1; padding: 0.8rem; border-radius: 50px; font-weight: 600;" data-i18n="common.view">
+                                        ${getNestedTranslation(currentLang, 'common.view')}
                                     </button>
                                     <button onclick="contactDoctor('${doc._id}', '${doc.firstName} ${doc.lastName}')" 
                                              class="btn-primary" 
-                                             style="flex: 1.5; padding: 0.8rem; border-radius: 50px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                                        <span>Contacter</span>
+                                             style="flex: 1.5; padding: 0.8rem; border-radius: 50px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" data-i18n="nav.contact">
+                                        <span>${getNestedTranslation(currentLang, 'nav.contact')}</span>
                                     </button>
                                 </div>
                             </div>
                         `;
                     }).join('');
                 } else {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Aucun spécialiste disponible pour le moment.</p>';
+                    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center;" data-i18n="chat.sidebar.no_doctors">${getNestedTranslation(currentLang, 'chat.sidebar.no_doctors')}</p>`;
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -934,7 +1021,7 @@
         }
 
         async function openDoctorProfile(doctorId) {
-            const doctor = allDoctors.find(d => d._id === doctorId);
+            const doctor = allDoctors.find(d => String(d._id) === String(doctorId) || String(d.id) === String(doctorId));
             if (!doctor) return;
 
             document.getElementById('modalDoctorName').textContent = `Dr. ${doctor.firstName} ${doctor.lastName}`;
@@ -952,7 +1039,7 @@
             }
 
             if (!doctor.certification && !doctor.cv) {
-                docsContainer.innerHTML = '<p style="color: var(--text-light); font-size: 0.9rem; font-style: italic;">Aucun document disponible.</p>';
+                docsContainer.innerHTML = `<p style="color: var(--text-light); font-size: 0.9rem; font-style: italic;" data-i18n="profile.no_doc">${getNestedTranslation(currentLang, 'profile.no_doc')}</p>`;
             }
 
             document.getElementById('modalContactBtn').onclick = () => {
@@ -969,7 +1056,7 @@
                     <span class="icon">${icon}</span>
                     <div class="details">
                         <span class="title">${title}</span>
-                        <span class="action">Cliquer pour voir le document</span>
+                        <span class="action" data-i18n="profile.view_doc">${getNestedTranslation(currentLang, 'profile.view_doc')}</span>
                     </div>
                 </div>
             `;
@@ -992,42 +1079,18 @@
 
         async function contactDoctor(id, name) {
             const token = localStorage.getItem('token');
-            if (!token) {
-                showNotification('Veuillez vous connecter pour contacter un médecin.', 'info');
-                setTimeout(() => window.location.href = 'login.html', 1500);
+            const doctor = allDoctors.find(d => String(d._id) === String(id) || String(d.id) === String(id));
+
+            if (!doctor || !doctor.phone) {
+                showNotification("Le numéro de téléphone du médecin n'est pas disponible.", 'error');
                 return;
             }
 
-            try {
-                // Send connection request immediately
-                const response = await fetch('/api/connections/request', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ doctorId: id })
-                });
+            // Save selected doctor and redirect to chat
+            localStorage.setItem('selectedDoctor', JSON.stringify({ id, name, phone: doctor.phone }));
 
-                const data = await response.json();
-
-                if (data.success) {
-                    showNotification(`Invitation envoyée ! Le Dr. ${name} va l'accepter pour que vous puissiez lui parler.`, 'success', 5000);
-                    localStorage.setItem('selectedDoctor', JSON.stringify({ id, name }));
-                } else {
-                    // Check for existing connection or pending request
-                    if (data.message.includes('déjà') || data.message.includes('already')) {
-                        showNotification('Vous avez déjà contacté ce médecin. Redirection vers votre messagerie...', 'info');
-                        localStorage.setItem('selectedDoctor', JSON.stringify({ id, name }));
-                        setTimeout(() => window.location.href = 'patient-chat.html', 1500);
-                    } else {
-                        showNotification(data.message || 'Erreur lors de l\'envoi de l\'invitation.', 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('Error sending invitation:', error);
-                showNotification('Erreur de connexion. Veuillez réessayer.', 'error');
-            }
+            // Redirect to Chat Page
+            window.location.href = 'patient-consultations.html';
         }
 
         function handleStartConsultation() {
@@ -1073,14 +1136,13 @@
                 if (user.role === 'doctor') {
                     authContainer.innerHTML = `
                         <button onclick="window.location.href='profile.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.profile">Profil</button>
-                        <button onclick="window.location.href='doctor-chat.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.my_patients">Mes Patients</button>
+                        <button onclick="window.location.href='doctor-patients.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.my_patients">Mes Patients</button>
                         <button onclick="logout()" class="btn-register" style="background: #ef4444; border: none; padding: 0.6rem 1.2rem;" data-i18n="nav.logout">Déconnexion</button>
                     `;
                 } else if (user.role === 'patient') {
                     authContainer.innerHTML = `
                         <button onclick="window.location.href='profile.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.profile">Profil</button>
-                        <button onclick="window.location.href='patient-appointments.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.appointments">Rendez-vous</button>
-                        <button onclick="window.location.href='patient-chat.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.dashboard">Dashboard</button>
+                        <button onclick="window.location.href='patient-dashboard.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.dashboard">Tableau de bord</button>
                         <button onclick="logout()" class="btn-register" style="background: #ef4444; border: none; padding: 0.6rem 1.2rem;" data-i18n="nav.logout">Déconnexion</button>
                     `;
                 } else if (user.role === 'admin') {
@@ -1095,6 +1157,7 @@
             // Fetch Doctors
             fetchDoctors();
         });
+
 
         // Close modal on outside click
         window.onclick = function (event) {
@@ -1161,29 +1224,22 @@
         </div>
         <div class="services-grid">
             <div class="service-card">
-                <div class="service-icon">🧠</div>
-                <h3 data-i18n="services.individual_title">Thérapie Individuelle</h3>
-                <p data-i18n="services.individual_desc">Un accompagnement personnalisé avec des psychologues qualifiés
-                    pour vous aider à surmonter vos défis
-                    personnels et atteindre vos objectifs de bien-être.</p>
+                <div class="service-icon" style="color: white;"><i class="fas fa-brain"></i></div>
+                <h3 data-i18n="services.individual_title">التدخل المعرفي السلوكي</h3>
+                <p data-i18n="services.individual_desc">المحتوى: جلسات تركز على تعزيز المرونة النفسية وتطوير استراتيجيات التكيف الناضجة لضمان استعادة التوازن النفسي.</p>
             </div>
             <div class="service-card">
-                <div class="service-icon">💑</div>
-                <h3 data-i18n="services.couple_title">Thérapie de Couple</h3>
-                <p data-i18n="services.couple_desc">Renforcez votre relation et améliorez votre communication grâce à
-                    nos séances de thérapie de couple
-                    avec des spécialistes expérimentés.</p>
+                <div class="service-icon" style="color: white;"><i class="fas fa-link"></i></div>
+                <h3 data-i18n="services.couple_title">ديناميكية الارتباط والتواصل.</h3>
+                <p data-i18n="services.couple_desc">المحتوى: تحليل أنماط الارتباط العاطفي ومعالجة الجمود التفاعلي بين الشريكين.</p>
             </div>
             <div class="service-card">
-                <div class="service-icon">👨‍👩‍👧‍👦</div>
-                <h3 data-i18n="services.family_title">Thérapie Familiale</h3>
-                <p data-i18n="services.family_desc">Créez un environnement familial harmonieux et résolvez les conflits
-                    avec l'aide de nos thérapeutes
-                    familiaux professionnels.</p>
+                <div class="service-icon" style="color: white;"><i class="fas fa-project-diagram"></i></div>
+                <h3 data-i18n="services.family_title">الاتزان والضبط النسقي</h3>
+                <p data-i18n="services.family_desc">المحتوى: دراسة التفاعلات الأسرية وإعادة رسم الحدود النفسية بين الأفراد. نسعى لتصحيح الأدوار داخل النسق الأسري وتوفير بيئة نمو صحية ومستقرة.</p>
             </div>
         </div>
     </section>
-
     <!-- Doctors Section -->
     <section class="doctors" id="specialistes" style="padding: 6rem 2rem; background: var(--bg-light);">
         <div class="section-header">
@@ -1218,11 +1274,11 @@
                     accompagnement professionnel, confidentiel et bienveillant.</p>
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-number">500+</div>
+                        <div class="stat-number">100+</div>
                         <div class="stat-label" data-i18n="about.stats.patients">Patients Satisfaits</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">50+</div>
+                        <div class="stat-number">20+</div>
                         <div class="stat-label" data-i18n="about.stats.psychologists">Psychologues</div>
                     </div>
                     <div class="stat-item">
@@ -1246,43 +1302,43 @@
                     construisons un avenir plus
                     serein.</p>
                 <div class="social-links">
-                    <div class="social-icon">📘</div>
-                    <div class="social-icon">📷</div>
-                    <div class="social-icon">🐦</div>
-                    <div class="social-icon">💼</div>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
                 </div>
             </div>
             <div class="footer-links">
                 <h4 data-i18n="nav.services">Services</h4>
                 <ul>
-                    <li><a href="#" data-i18n="services.individual_title">Thérapie Individuelle</a></li>
-                    <li><a href="#" data-i18n="services.couple_title">Thérapie de Couple</a></li>
-                    <li><a href="#" data-i18n="services.family_title">Thérapie Familiale</a></li>
+                    <li><a href="#" data-i18n="services.individual_title">التدخل المعرفي السلوكي</a></li>
+                    <li><a href="#" data-i18n="services.couple_title">ديناميكية الارتباط والتواصل</a></li>
+                    <li><a href="#" data-i18n="services.family_title">الاتزان والضبط النسقي</a></li>
                     <li><a href="#" data-i18n="nav.services">Consultation en ligne</a></li>
                 </ul>
             </div>
             <div class="footer-links">
                 <h4 data-i18n="footer.company">Entreprise</h4>
                 <ul>
-                    <li><a href="#" data-i18n="nav.apropos">À Propos</a></li>
-                    <li><a href="#">Notre Équipe</a></li>
-                    <li><a href="#">Carrières</a></li>
-                    <li><a href="#">Blog</a></li>
+                    <li><a href="#apropos" data-i18n="nav.apropos">À Propos</a></li>
+                    <li><a href="#" data-i18n="footer.team">Notre Équipe</a></li>
+                    <li><a href="#" data-i18n="footer.careers">Carrières</a></li>
+                    <li><a href="#" data-i18n="footer.blog">Blog</a></li>
                 </ul>
             </div>
             <div class="footer-links">
                 <h4 data-i18n="footer.support">Support</h4>
                 <ul>
-                    <li><a href="#">Centre d'aide</a></li>
-                    <li><a href="#" data-i18n="nav.contact">Contact</a></li>
-                    <li><a href="#">Confidentialité</a></li>
-                    <li><a href="#">Conditions</a></li>
+                    <li><a href="#" data-i18n="footer.help_center">Centre d'aide</a></li>
+                    <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                    <li><a href="#" data-i18n="footer.privacy">Confidentialité</a></li>
+                    <li><a href="#" data-i18n="footer.terms">Conditions</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026. <span data-i18n="footer.rights">Tous droits réservés.</span> <span
-                    data-i18n="footer.made_with">Made with ❤️ by Yassine Kadri.</span></p>
+                    data-i18n="footer.made_with">Made with ❤️ by Yassine Kadri - Protium agency.</span></p>
         </div>
     </footer>
 
@@ -1312,8 +1368,8 @@
             </div>
             <div class="modal-footer">
                 <button onclick="closeDoctorProfile()" class="btn-secondary"
-                    style="padding: 0.75rem 1.5rem;">Fermer</button>
-                <button id="modalContactBtn" class="btn-primary" style="padding: 0.75rem 2rem;">Contacter</button>
+                    style="padding: 0.75rem 1.5rem;" data-i18n="common.close">Fermer</button>
+                <button id="modalContactBtn" class="btn-primary" style="padding: 0.75rem 2rem;" data-i18n="nav.contact">Contacter</button>
             </div>
         </div>
     </div>

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
 const { auth } = require('../middleware/auth');
 const User = require('../models/User');
 const multer = require('multer');
@@ -24,77 +23,76 @@ const upload = multer({
         const filetypes = /jpeg|jpg|png/;
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
+        if (mimetype && extname) return cb(null, true);
         cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
     }
 });
 
-// Update profile (Password usually)
+// Update profile
 router.put('/profile', auth, async (req, res) => {
     try {
-        const { currentPassword, newPassword, firstName, lastName, phone, profilePicture, certification, cv, bio, specialty, availability, location, consultationMode } = req.body;
+        const {
+            currentPassword, newPassword,
+            firstName, lastName, phone, profilePicture,
+            certification, cv, bio, specialty, availability, location, consultationMode
+        } = req.body;
 
-        const user = await User.findById(req.user.id).select('+password');
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
 
-        // Update basic info if provided
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (phone) user.phone = phone;
-        if (profilePicture !== undefined) user.profilePicture = profilePicture;
-        if (certification !== undefined && user.role === 'doctor') user.certification = certification;
-        if (cv !== undefined && user.role === 'doctor') user.cv = cv;
-        if (bio !== undefined && user.role === 'doctor') user.bio = bio;
-        if (specialty !== undefined && user.role === 'doctor') user.specialty = specialty;
-        if (availability !== undefined && user.role === 'doctor') user.availability = availability;
-        if (location !== undefined && user.role === 'doctor') user.location = location;
-        if (consultationMode !== undefined && user.role === 'doctor') user.consultationMode = consultationMode;
+        const updateData = {};
+        if (firstName) updateData.firstName = firstName;
+        if (lastName) updateData.lastName = lastName;
+        if (phone) updateData.phone = phone;
+        if (profilePicture !== undefined) updateData.profilePicture = profilePicture;
+        if (user.role === 'doctor') {
+            if (certification !== undefined) updateData.certification = certification;
+            if (cv !== undefined) updateData.cv = cv;
+            if (bio !== undefined) updateData.bio = bio;
+            if (specialty !== undefined) updateData.specialty = specialty;
+            if (availability !== undefined) updateData.availability = availability;
+            if (location !== undefined) updateData.location = location;
+            if (consultationMode !== undefined) updateData.consultationMode = consultationMode;
+        }
 
         // Update password if provided
         if (newPassword) {
             if (!currentPassword) {
                 return res.status(400).json({ success: false, message: 'Mot de passe actuel requis pour changer le mot de passe' });
             }
-
-            // Verify current password
-            const isMatch = await user.comparePassword(currentPassword);
+            const isMatch = await User.comparePassword(currentPassword, user.password);
             if (!isMatch) {
                 return res.status(400).json({ success: false, message: 'Mot de passe actuel incorrect' });
             }
-
-            user.password = newPassword;
+            await User.updatePassword(user.id, newPassword);
         }
 
-        await user.save();
+        await User.update(user.id, updateData);
+        const updatedUser = await User.findById(user.id);
 
         res.json({
             success: true,
             message: 'Profil mis à jour avec succès',
             user: {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phone: user.phone,
-                role: user.role,
-                profilePicture: user.profilePicture,
-                certification: user.certification,
-                cv: user.cv,
-                bio: user.bio,
-                specialty: user.specialty,
-                availability: user.availability,
-                location: user.location,
-                consultationMode: user.consultationMode
+                id: updatedUser.id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                email: updatedUser.email,
+                phone: updatedUser.phone,
+                role: updatedUser.role,
+                profilePicture: updatedUser.profilePicture,
+                certification: updatedUser.certification,
+                cv: updatedUser.cv,
+                bio: updatedUser.bio,
+                specialty: updatedUser.specialty,
+                availability: updatedUser.availability,
+                location: updatedUser.location,
+                consultationMode: updatedUser.consultationMode
             }
         });
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Erreur lors de la mise à jour du profil',
-            debug: error.message 
-        });
+        res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour du profil', debug: error.message });
     }
 });
 
@@ -106,24 +104,15 @@ router.post('/upload-avatar', auth, upload.single('avatar'), async (req, res) =>
         }
 
         const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
-        }
+        if (!user) return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
 
-        // Save the file path in the user model
-        // We store the relative path that can be served via /uploads
         const avatarUrl = `/uploads/${req.file.filename}`;
-        user.profilePicture = avatarUrl;
-        await user.save();
+        await User.update(user.id, { profilePicture: avatarUrl });
 
-        res.json({
-            success: true,
-            message: 'Photo de profil mise à jour',
-            profilePicture: avatarUrl
-        });
+        res.json({ success: true, message: 'Photo de profil mise à jour', profilePicture: avatarUrl });
     } catch (error) {
         console.error('Error uploading avatar:', error);
-        res.status(500).json({ success: false, message: error.message || 'Erreur lors de l\'upload' });
+        res.status(500).json({ success: false, message: error.message || "Erreur lors de l'upload" });
     }
 });
 

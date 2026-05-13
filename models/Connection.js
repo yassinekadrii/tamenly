@@ -1,33 +1,65 @@
-const mongoose = require('mongoose');
+/**
+ * @file models/Connection.js
+ * @description MySQL Data Access Object for patient-doctor connections.
+ */
 
-const connectionSchema = new mongoose.Schema({
-    patient: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    doctor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    status: {
-        type: String,
-        enum: ['pending', 'accepted', 'blocked'],
-        default: 'pending'
-    },
-    requestedBy: {
-        type: String,
-        enum: ['patient', 'doctor'],
-        default: 'patient'
-    }
-}, {
-    timestamps: true
-});
+const db = require('../db/mysql');
 
-// Ensure unique connection between same patient and doctor
-connectionSchema.index({ patient: 1, doctor: 1 }, { unique: true });
+class Connection {
+  static async findOne(patientId, doctorId) {
+    const rows = await db.query(
+      'SELECT * FROM connections WHERE patient_id = ? AND doctor_id = ?',
+      [patientId, doctorId]
+    );
+    return rows[0] || null;
+  }
 
-const Connection = mongoose.model('Connection', connectionSchema);
+  static async create(patientId, doctorId, status = 'pending', requestedBy = 'patient') {
+    const result = await db.query(
+      'INSERT INTO connections (patient_id, doctor_id, status, requested_by) VALUES (?, ?, ?, ?)',
+      [patientId, doctorId, status, requestedBy]
+    );
+    return { id: result.insertId, patient_id: patientId, doctor_id: doctorId, status, requested_by: requestedBy };
+  }
+
+  static async updateStatus(patientId, doctorId, status) {
+    await db.query(
+      'UPDATE connections SET status = ? WHERE patient_id = ? AND doctor_id = ?',
+      [status, patientId, doctorId]
+    );
+    return true;
+  }
+
+  static async upsert(patientId, doctorId, status, requestedBy = 'doctor') {
+    await db.query(
+      `INSERT INTO connections (patient_id, doctor_id, status, requested_by) 
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE status = ?, requested_by = ?`,
+      [patientId, doctorId, status, requestedBy, status, requestedBy]
+    );
+    return true;
+  }
+
+  static async findByUser(userId, role) {
+    const column = role === 'doctor' ? 'doctor_id' : 'patient_id';
+    const joinColumn = role === 'doctor' ? 'patient_id' : 'doctor_id';
+    const joinTable = 'users';
+
+    const rows = await db.query(
+      `SELECT c.*, 
+        u.id as other_id, u.first_name, u.last_name, u.email, u.phone, u.profile_picture, u.role, u.specialty
+       FROM connections c
+       JOIN ${joinTable} u ON c.${joinColumn} = u.id
+       WHERE c.${column} = ?`,
+      [userId]
+    );
+    return rows;
+  }
+
+  static async countDocuments() {
+    const rows = await db.query('SELECT COUNT(*) as count FROM connections');
+    return rows[0].count;
+  }
+}
 
 module.exports = Connection;

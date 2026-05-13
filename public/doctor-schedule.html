@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <title>Mon Planning - طمئن</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -403,11 +404,26 @@
 </head>
 
 <body>
-    <div class="container">
+    <nav class="navbar" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+        <a href="index.html" class="logo" style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color); text-decoration: none;">طمئن</a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 2rem;">
+            <a href="doctor-patients.html" style="text-decoration: none; color: var(--text-light); font-weight: 500;" data-i18n="nav.accueil">Chat</a>
+            <a href="doctor-appointments.html" style="text-decoration: none; color: var(--text-light); font-weight: 500;" data-i18n="nav.appointments">Rendez-vous</a>
+            <a href="doctor-schedule.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;" data-i18n="nav.schedule">Planning</a>
+            <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer; font-weight:600; margin-left: 1rem;"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 80px;">
         <div class="lang-switcher">
             <button class="lang-btn" id="langSwitcher" onclick="toggleLanguage()">FR</button>
         </div>
         
+        <div style="margin-bottom: 1.5rem; text-align: left;">
+            <a href="doctor-patients.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                ← Retour au Chat
+            </a>
+        </div>
         <h2 data-i18n="schedule.title">Gérer mes disponibilités</h2>
         <p class="subtitle" data-i18n="schedule.subtitle">Définissez vos heures de consultation</p>
 
@@ -427,8 +443,9 @@
             <button type="submit" class="btn-submit" data-i18n="schedule.save">Enregistrer</button>
         </form>
         
-        <a href="doctor-chat.html" class="back-link" data-i18n="schedule.back">Retour</a>
+        <a href="doctor-patients.html" class="back-link" data-i18n="schedule.back">Retour</a>
     </div>
+
 
     <script src="js/notifications.js"></script>
     <script src="js/i18n.js"></script>

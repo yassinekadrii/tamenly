@@ -1,9 +1,9 @@
 /**
  * @file scripts/seedAdmin.js
- * @description Script to seed initial administrative users into the database.
+ * @description Script to seed initial administrative users into the database using MySQL.
  * Useful for initializing the platform after a clean database setup.
  */
-const mongoose = require('mongoose');
+
 const dotenv = require('dotenv');
 const User = require('../models/User');
 
@@ -24,16 +24,10 @@ const ADMIN_DATA = {
 
 const seedAdmin = async () => {
     try {
-        // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-
-        console.log('✅ Connecté à MongoDB');
+        console.log('✅ Connecté à MySQL (via le modèle User)');
 
         // Check if admin already exists
-        const existingAdmin = await User.findOne({ email: ADMIN_DATA.email });
+        const existingAdmin = await User.findOneByEmail(ADMIN_DATA.email);
 
         if (existingAdmin) {
             console.log('ℹ️  Un compte admin existe déjà avec cet email');
@@ -42,8 +36,7 @@ const seedAdmin = async () => {
         }
 
         // Create admin user
-        const admin = new User(ADMIN_DATA);
-        await admin.save();
+        await User.create(ADMIN_DATA);
 
         console.log('✅ Compte admin créé avec succès!');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
