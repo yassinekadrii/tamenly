@@ -1,54 +1,86 @@
-# PsyConnect - Plateforme de Psychologie (V3.0)
+# 🧠 Tamenly - Plateforme de Psychologie Clinical Support (V3.1)
 
-PsyConnect est une plateforme de gestion et de consultation psychologique moderne, optimisée pour une communication fluide via WhatsApp et une gestion rigoureuse des prescriptions médicales.
+Tamenly (طمئن) est une plateforme de gestion et de consultation psychologique premium, spécialisée dans les approches **TCC (Cognitive Behavioral)**, **Dynamique de l'Attachement** et **Équilibre Systémique**. Elle est optimisée pour une communication sécurisée via WhatsApp et une gestion clinique rigoureuse.
 
-## 🌟 Nouvelles Fonctionnalités (V3.0)
+## 🌟 Nouvelles Fonctionnalités & Améliorations (V3.1)
 
-### 📞 Communication Intégrée (WhatsApp)
-- **Contact Direct** : Redirection instantanée vers WhatsApp pour le chat et les appels vidéo/audio.
-- **Bouton WhatsApp en Chat** : Les patients et médecins peuvent basculer vers WhatsApp d'un simple clic depuis l'interface de discussion.
-- **Google Meet (Optionnel)** : Support pour la génération de liens de réunion externes (Meet/Zoom).
+### 🏥 Approche Clinique Spécialisée
+- **Intervention Cognitivo-Comportementale (CBT)** : Séances axées sur la résilience et les stratégies d'adaptation.
+- **Dynamique de l'Attachement** : Analyse des liens émotionnels et traitement de la rigidité relationnelle.
+- **Équilibre et Régulation Systémique** : Travail sur les frontières familiales et la correction des rôles au sein du système.
 
-### 📋 Gestion des Ordonnances
-- **Générateur PDF** : Création d'ordonnances professionnelles incluant médicaments, exercices thérapeutiques et consignes.
-- **Pièces Jointes** : Possibilité d'attacher des fichiers PDF externes aux ordonnances.
-- **Consultation Patient** : Espace dédié permettant aux patients de visualiser, télécharger et imprimer leurs ordonnances.
+### 📋 Gestion Avancée des Ordonnances
+- **Ordre Clinique Optimisé** : Les ordonnances suivent désormais un flux logique : **Exercices 🏃** -> **PDF 📄** -> **Médicaments 💊**.
+- **Générateur PDF Premium** : Création d'ordonnances professionnelles avec signatures et tampons numériques.
+- **Consignes Localisées** : Messages d'invitation WhatsApp traduits automatiquement en Arabe, Français ou Anglais.
 
-### 🌍 Internationalisation (i18n)
-- **Support Multilingue** : Interface disponible en **Français**, **Anglais** et **Arabe**.
-- **Support RTL** : Mise en page adaptée dynamiquement pour l'arabe (Right-to-Left).
-
-### 🛡️ Sécurité & Performance
-- **Polling Database** : Transition vers un modèle de synchronisation basé sur le polling (10s). Ce choix technique permet d'éliminer les coûts élevés liés à la maintenance de serveurs WebSocket/WebRTC dédiés, tout en garantissant une compatibilité totale avec les hébergements mutualisés standards.
-- **WhatsApp Integration** : Utilisation de l'infrastructure WhatsApp pour les appels et le chat instantané afin de réduire la complexité et les coûts d'infrastructure serveur.
-- **Protection des Données** : Authentification JWT, hachage Bcrypt et protection contre les injections SQL.
+### 💎 Design & Expérience Utilisateur
+- **Icônes Cliniques Premium** : Intégration de FontAwesome Pro pour une apparence médicale haut de gamme.
+- **Support Multilingue Complet** : Arabe (RTL), Français et Anglais avec détection automatique.
 
 ---
 
-## ⚠️ Note sur l'Hébergement & Production
+## 🚀 Installation & Démarrage Rapide
 
-Le projet actuel constitue le **socle fonctionnel de base** de la plateforme. Pour un lancement en production complet, il est recommandé de :
-- **Hébergement Dédié** : Passer à un environnement **VPS ou Cloud** (AWS, DigitalOcean, Azure) pour une meilleure scalabilité.
-- **Séparation des Services** : Héberger séparément la base de données (MySQL managé), l'API (Node.js) et le frontend (Static storage/CDN) pour optimiser les performances et la sécurité.
-- **SSL/TLS** : Assurer une configuration HTTPS complète sur tous les points d'accès.
+Suivez ces étapes pour installer et lancer le projet sur votre environnement local ou serveur :
 
----
+### 1️⃣ Prérequis
+- **Node.js** (v18.x recommandé)
+- **MySQL** (v8.0+)
+- **Git**
 
-## 🚀 Installation & Démarrage
-
-### Prérequis
-- Node.js (v14+)
-- MySQL (v8.0+)
-
-### Commandes
+### 2️⃣ Clonage & Installation
 ```bash
+# Cloner le dépôt
+git clone https://github.com/yassinekadrii/tamenly.git
+cd tamenly
+
+# Installer les dépendances
 npm install
+```
+
+### 3️⃣ Configuration de la Base de Données
+1. Créez une base de données MySQL nommée `xwqgvsdy_tummin_db` (ou votre nom local).
+2. Importez le schéma initial :
+```bash
+mysql -u votre_user -p xwqgvsdy_tummin_db < db/schema.sql
+```
+
+### 4️⃣ Configuration des Variables d'Environnement
+Créez un fichier `.env` à la racine et configurez vos accès (voir `.env.example` ou utilisez les valeurs fournies pour la production) :
+```env
+PORT=3001
+MYSQL_HOST=127.0.0.1
+MYSQL_USER=votre_user
+MYSQL_PASS=votre_password
+MYSQL_DB=xwqgvsdy_tummin_db
+JWT_SECRET=votre_secret_key
+```
+
+### 5️⃣ Lancement de l'Application
+```bash
+# Lancer en mode production
+node server.js
+
+# OU lancer en mode développement (avec redémarrage automatique)
 npm run dev
+```
+
+### 6️⃣ Initialisation des Comptes
+Pour créer l'administrateur et les comptes de test par défaut :
+```bash
+node scripts/seedAdmin.js
 ```
 
 ---
 
-**PsyConnect** - Votre bien-être mental, notre priorité 💜
+## 🛡️ Architecture & Sécurité
+- **Backend** : Node.js / Express avec protection Helmet et Rate-limiting.
+- **Base de données** : MySQL optimisé pour les hébergements mutualisés et cPanel.
+- **Authentification** : JWT (JSON Web Tokens) sécurisés pour les rôles Docteur, Patient et Admin.
 
 ---
-*Made with ❤️ by **Yassine Kadri***
+
+**Tamenly** - *Votre bien-être mental, notre priorité* 💜
+
+*Propulsé par Antigravity AI | Yassine Kadri (Protium Agency)*
