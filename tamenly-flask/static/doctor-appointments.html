@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <title>Mes Rendez-vous - طمئن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/i18n.js"></script>
+    <script src="js/notifications.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        .container { max-width: 1000px; margin: 3rem auto; padding: 0 1.5rem; }
+        .header { margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .header p { color: var(--text-muted); }
+
+        .appointment-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .appointment-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+
+        .patient-info { display: flex; align-items: center; gap: 1rem; }
+        .patient-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .patient-details h3 { font-size: 1.1rem; font-weight: 700; }
+        .patient-details p { font-size: 0.85rem; color: var(--text-muted); }
+
+        .time-info { text-align: right; }
+        .time-badge {
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+        .status-confirmed { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">طمئن</a>
+        <div class="nav-links">
+            <a href="doctor-patients.html" data-i18n="nav.accueil">Chat</a>
+            <a href="doctor-appointments.html" class="active" data-i18n="nav.appointments">Rendez-vous</a>
+            <a href="doctor-schedule.html" data-i18n="nav.schedule">Planning</a>
+            <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer; font-weight:600; margin-left: 1rem;"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="doctor-patients.html" style="text-decoration: none; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-arrow-left"></i> Retour au Chat
+            </a>
+        </div>
+        <div class="header">
+            <h1 data-i18n="doctor.appointments.title">Mes Rendez-vous</h1>
+            <p data-i18n="doctor.appointments.subtitle">Gérez vos consultations à venir</p>
+        </div>
+
+        <div id="appointmentsList">
+            <!-- Appointments will be loaded here -->
+            <div style="text-align:center; padding: 3rem;">Chargement...</div>
+        </div>
+    </div>
+
+
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!token || user.role !== 'doctor') window.location.href = 'login.html';
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        async function loadAppointments() {
+            try {
+                const res = await fetch(`${API}/appointments/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const container = document.getElementById('appointmentsList');
+
+                if (data.appointments && data.appointments.length > 0) {
+                    container.innerHTML = '';
+                    data.appointments.forEach(apt => {
+                        const date = new Date(apt.startTime);
+                        const dateStr = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+                        const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        
+                        const card = document.createElement('div');
+                        card.className = 'appointment-card';
+                        card.innerHTML = `
+                            <div class="patient-info">
+                                <img src="${apt.patient.profilePicture || 'https://ui-avatars.com/api/?name=' + apt.patient.firstName + '+' + apt.patient.lastName}" class="patient-avatar">
+                                <div class="patient-details">
+                                    <h3>${apt.patient.firstName} ${apt.patient.lastName}</h3>
+                                    <p>${apt.type === 'online' ? '💻 Consultation en ligne' : '🏥 En cabinet'}</p>
+                                </div>
+                            </div>
+                            <div class="time-info">
+                                <div class="time-badge">${dateStr} à ${timeStr}</div>
+                                <div>
+                                    <span class="status-badge status-${apt.status}">${apt.status === 'confirmed' ? 'Confirmé' : 'En attente'}</span>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">📅</div>
+                            <h3 data-i18n="doctor.appointments.no_appointments">Aucun rendez-vous pour le moment</h3>
+                            <p data-i18n="doctor.appointments.no_appointments_desc">Vos futurs rendez-vous apparaîtront ici.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        loadAppointments();
+    </script>
+</body>
+</html>

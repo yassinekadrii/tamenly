@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <title>PsyConnect - Évaluation de Santé Mentale</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+        }
+
+        .assessment-container {
+            max-width: 650px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .assessment-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .question-box {
+            margin-bottom: 2.5rem;
+            display: none;
+        }
+
+        .question-box.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: white;
+            border: 1.5px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #f5f3ff;
+        }
+
+        .option-btn.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .results-view {
+            display: none;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-normal { background: #dcfce7; color: #15803d; }
+        .status-mild { background: #fef9c3; color: #854d0e; }
+        .status-moderate { background: #ffedd5; color: #9a3412; }
+        .status-severe { background: #fee2e2; color: #b91c1c; }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .doctor-selector {
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            margin-top: 0.5rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="assessment-container">
+        <div class="assessment-card" id="quizCard">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="header">
+                <h1 data-i18n="assessment.header">Évaluation de Santé Mentale</h1>
+                <p data-i18n="assessment.header_desc">Veuillez répondre honnêtement aux questions suivantes sur les 2 dernières semaines.</p>
+            </div>
+
+            <div id="questionsContainer">
+                <!-- Question 1 -->
+                <div class="question-box active" data-step="1">
+                    <span class="question-text">1. Se sentir nerveux, anxieux ou à bout de nerfs ?</span>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="selectOption(1, 0)">Jamais</button>
+                        <button class="option-btn" onclick="selectOption(1, 1)">Plusieurs jours</button>
+                        <button class="option-btn" onclick="selectOption(1, 2)">Plus de la moitié du temps</button>
+                        <button class="option-btn" onclick="selectOption(1, 3)">Presque tous les jours</button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-box" data-step="2">
+                    <span class="question-text">2. Ne pas pouvoir arrêter de s'inquiéter ou ne pas contrôler ses inquiétudes ?</span>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="selectOption(2, 0)">Jamais</button>
+                        <button class="option-btn" onclick="selectOption(2, 1)">Plusieurs jours</button>
+                        <button class="option-btn" onclick="selectOption(2, 2)">Plus de la moitié du temps</button>
+                        <button class="option-btn" onclick="selectOption(2, 3)">Presque tous les jours</button>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-box" data-step="3">
+                    <span class="question-text">3. Se sentir triste, déprimé ou désespéré ?</span>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="selectOption(3, 0)">Jamais</button>
+                        <button class="option-btn" onclick="selectOption(3, 1)">Plusieurs jours</button>
+                        <button class="option-btn" onclick="selectOption(3, 2)">Plus de la moitié du temps</button>
+                        <button class="option-btn" onclick="selectOption(3, 3)">Presque tous les jours</button>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-box" data-step="4">
+                    <span class="question-text">4. Avoir peu d'intérêt ou de plaisir à faire les choses ?</span>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="selectOption(4, 0)">Jamais</button>
+                        <button class="option-btn" onclick="selectOption(4, 1)">Plusieurs jours</button>
+                        <button class="option-btn" onclick="selectOption(4, 2)">Plus de la moitié du temps</button>
+                        <button class="option-btn" onclick="selectOption(4, 3)">Presque tous les jours</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsView" class="results-view">
+                <div id="statusBadge" class="status-badge">Normal</div>
+                <h2 id="resultHeading">Tout semble normal</h2>
+                <p id="resultText" style="color:#64748b; margin-bottom: 2rem;">Vos réponses ne suggèrent pas de détresse psychologique majeure. Cependant, parler à un professionnel peut toujours être utile.</p>
+                
+                <div class="doctor-selector">
+                    <label style="font-weight:600;" data-i18n="assessment.select_doctor">Choisir un médecin pour réviser :</label>
+                    <select id="doctorSelect">
+                        <option value="">Sélectionner un médecin (Optionnel)</option>
+                    </select>
+                </div>
+
+                <button class="btn-submit" onclick="submitAssessment()" data-i18n="assessment.submit">Envoyer les résultats</button>
+            </div>
+            
+            <div style="text-align:center;">
+                <a href="patient-dashboard.html" class="back-link">← Retour au tableau de bord</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/translations.js"></script>
+    <script>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
+        let currentStep = 1;
+        const totalSteps = 4;
+        let responses = [];
+        let totalScore = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+             const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'patient') {
+                window.location.href = 'login.html';
+                return;
+            }
+            fetchDoctors();
+            updateLanguage();
+        });
+
+        function selectOption(step, score) {
+            const currentBox = document.querySelector(`.question-box[data-step="${step}"]`);
+            const questionText = currentBox.querySelector('.question-text').textContent;
+            const answerText = event.target.textContent;
+
+            responses[step-1] = { question: questionText, answer: answerText, score };
+            
+            if (step < totalSteps) {
+                nextStep();
+            } else {
+                showResults();
+            }
+        }
+
+        function nextStep() {
+            document.querySelector(`.question-box[data-step="${currentStep}"]`).classList.remove('active');
+            currentStep++;
+            document.querySelector(`.question-box[data-step="${currentStep}"]`).classList.add('active');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const fill = document.getElementById('progressFill');
+            fill.style.width = `${(currentStep / totalSteps) * 100}%`;
+        }
+
+        function showResults() {
+            document.getElementById('questionsContainer').style.display = 'none';
+            document.getElementById('resultsView').style.display = 'block';
+            document.getElementById('progressFill').style.width = '100%';
+            
+            totalScore = responses.reduce((acc, r) => acc + r.score, 0);
+            
+            const badge = document.getElementById('statusBadge');
+            const heading = document.getElementById('resultHeading');
+            const resultText = document.getElementById('resultText');
+
+            if (totalScore >= 9) {
+                badge.className = 'status-badge status-severe';
+                badge.textContent = 'Avertissement';
+                heading.textContent = 'Détresse Sévère';
+                resultText.textContent = "Vos résultats indiquent une détresse significative. Nous vous recommandons vivement de consulter un spécialiste rapidement.";
+            } else if (totalScore >= 6) {
+                badge.className = 'status-badge status-moderate';
+                badge.textContent = 'Attention';
+                heading.textContent = 'Détresse Modérée';
+                resultText.textContent = "Vous semblez traverser une période difficile. Parler à un médecin pourrait vous aider à gérer cette situation.";
+            } else if (totalScore >= 3) {
+                badge.className = 'status-badge status-mild';
+                badge.textContent = 'Léger';
+                heading.textContent = 'Légère Inquiétude';
+                resultText.textContent = "Il y a quelques signes de stress ou d'anxiété. Un suivi préventif est recommandé.";
+            } else {
+                badge.className = 'status-badge status-normal';
+                badge.textContent = 'Normal';
+                heading.textContent = 'Tout va bien !';
+                resultText.textContent = "Vos réponses indiquent un état émotionnel stable. Gardez ce cap !";
+            }
+        }
+
+        async function fetchDoctors() {
+            try {
+                const response = await fetch(`${API_URL}/patient/doctors`);
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('doctorSelect');
+                    data.doctors.forEach(doc => {
+                        const opt = document.createElement('option');
+                        opt.value = doc._id;
+                        opt.textContent = `Dr. ${doc.lastName} (${doc.specialty})`;
+                        select.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching doctors:', err);
+            }
+        }
+
+        async function submitAssessment() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch(`${API_URL}/assessments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ responses, doctorId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Vos résultats ont été envoyés avec succès.');
+                    window.location.href = 'patient-dashboard.html';
+                } else {
+                    alert('Erreur: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('Erreur lors de la soumission.');
+            }
+        }
+    </script>
+</body>
+</html>

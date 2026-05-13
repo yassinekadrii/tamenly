@@ -1,0 +1,1378 @@
+<!-- 
+  @file public/index.html
+  @description Main landing page for طمئن.
+  
+  Sections:
+  - Navbar: Multi-language switcher, authentication links
+  - Hero: Brand introduction
+  - Services: Overview of platform features
+  - Specialists: Dynamic listing of doctors
+  - About/Contact: Platform information
+-->
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- ✅ PRIMARY SEO TAGS -->
+    <title>طمئن | منصة الدعم النفسي والصحة العقلية - Tamenly</title>
+    <meta name="description" content="منصة طمئن للدعم النفسي - تواصل مع أفضل الأطباء النفسيين واختصاصيي الصحة النفسية. استشارات نفسية عبر الإنترنت بسرية تامة. Plateforme de soutien psychologique en ligne.">
+    <meta name="keywords" content="منصة طمئن, طمئن, دعم نفسي, صحة نفسية, طبيب نفسي, استشارة نفسية, علاج نفسي, صحة عقلية, psychologue, santé mentale, tamenly, tamenly.com, plateforme psychologie">
+    <meta name="author" content="Tamenly - طمئن">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tamenly.com/">
+
+    <!-- ✅ OPEN GRAPH (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tamenly.com/">
+    <meta property="og:title" content="طمئن | منصة الدعم النفسي - Tamenly">
+    <meta property="og:description" content="تواصل مع أخصائيين نفسيين معتمدين عبر منصة طمئن. استشارات آمنة وسرية عبر الإنترنت.">
+    <meta property="og:image" content="https://tamenly.com/images/og-image.png">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:locale:alternate" content="fr_FR">
+    <meta property="og:site_name" content="طمئن - Tummin">
+
+    <!-- ✅ TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tamenly.com/">
+    <meta name="twitter:title" content="طمئن | منصة الدعم النفسي - Tamenly">
+    <meta name="twitter:description" content="تواصل مع أخصائيين نفسيين معتمدين عبر منصة طمئن.">
+    <meta name="twitter:image" content="https://tamenly.com/images/og-image.png">
+
+    <!-- ✅ ARABIC / RTL LANGUAGE SUPPORT -->
+    <meta http-equiv="Content-Language" content="ar, fr, en">
+
+    <!-- ✅ STRUCTURED DATA (JSON-LD for Google) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalOrganization",
+      "name": "طمئن - Tamenly",
+      "alternateName": ["منصة طمئن", "Tamenly Platform", "Plateforme Tamenly"],
+      "url": "https://tamenly.com",
+      "logo": "https://tamenly.com/images/logo.png",
+      "description": "منصة للدعم النفسي والصحة العقلية تربط المرضى بالأطباء النفسيين المعتمدين.",
+      "medicalSpecialty": "Psychiatry",
+      "availableLanguage": ["Arabic", "French", "English"],
+      "sameAs": [
+        "https://tamenly.com"
+      ]
+    }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Cairo:wght@700&family=Tajawal:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.25rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-auth {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-login {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-register {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-1);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 102, 241, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: var(--gradient-1);
+            opacity: 0.1;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            color: var(--text-dark);
+        }
+
+        .hero-content .highlight {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 1s ease;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 6rem 2rem;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+
+        .service-card {
+            padding: 2.5rem;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+        }
+
+        .service-card:nth-child(2) .service-icon {
+            background: var(--gradient-2);
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: var(--gradient-3);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* About Section */
+        .about {
+            padding: 6rem 2rem;
+            background: var(--bg-light);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .about-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .about-content p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: var(--white);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .footer-logo-text {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            line-height: 1.2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            width: fit-content;
+        }
+
+        .footer-logo-text i {
+            font-size: 1.8rem;
+            -webkit-text-fill-color: initial;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-logo-text:hover {
+            transform: translateY(-3px);
+            background-color: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo {
+            height: 55px;
+            width: auto;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .footer-brand p {
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--white);
+            font-size: 1.4rem;
+        }
+
+        .social-icon:hover {
+            background: var(--gradient-1);
+            transform: translateY(-3px);
+        }
+
+        .footer-links h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links ul li a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.5rem 0;
+            }
+
+            .nav-container {
+                padding: 1rem;
+            }
+
+            body.lang-en .nav-container,
+            body.lang-fr .nav-container,
+            body.lang-ar .nav-container {
+                flex-direction: row-reverse;
+            }
+
+            .hamburger {
+                display: block;
+                cursor: pointer;
+                z-index: 1001;
+            }
+
+            .hamburger span {
+                display: block;
+                width: 25px;
+                height: 3px;
+                margin: 5px auto;
+                background-color: var(--text-dark);
+                transition: all 0.3s ease-in-out;
+            }
+
+            .nav-links {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+                gap: 1.5rem;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-auth {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                padding: 1rem 2rem 2rem;
+                gap: 1rem;
+                position: fixed;
+                left: -100%;
+                top: 380px;
+                /* Adjust top based on nav-links padding/items */
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                transition: 0.3s;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                z-index: 1000;
+            }
+
+            .nav-auth.active {
+                display: flex;
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 1.5rem 0;
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+
+            .logo {
+                order: 1;
+            }
+
+            .nav-lang {
+                order: 2;
+                margin: 0 !important;
+            }
+
+            .hamburger {
+                order: 3;
+                display: block;
+            }
+
+            .hero-container,
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Doctor Profile Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease-out;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background: var(--bg-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .doc-section {
+            margin-bottom: 2rem;
+        }
+
+        .doc-section h4 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .doc-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-light);
+            transform: translateX(5px);
+        }
+
+        .doc-btn .icon {
+            font-size: 1.5rem;
+        }
+
+        .doc-btn .details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-btn .title {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .doc-btn .action {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        .prod-notice-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(139, 92, 246, 0.9));
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+
+        .prod-notice-banner i {
+            margin-right: 8px;
+        }
+
+        .prod-notice-banner .highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin: 0 4px;
+        }
+
+        @media (max-width: 768px) {
+            .prod-notice-banner {
+                font-size: 0.75rem;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+    <script src="js/i18n.js"></script>
+    <script src="js/notifications.js"></script>
+</head>
+
+<body>
+    <!-- Production Notice Banner -->
+    <div class="prod-notice-banner">
+        <i class="fas fa-info-circle"></i>
+        <span data-i18n="common.prod_notice">Ceci est le socle fonctionnel. Pour une production complète, le déploiement sur Cloud/VPS (AWS/DigitalOcean) avec services séparés est recommandé.</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar" style="top: 40px;">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <img src="images/image.png" alt="طمئن - منصة طمئن للدعم النفسي">
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#accueil" data-i18n="nav.accueil">Accueil</a></li>
+                <li><a href="#services" data-i18n="nav.services">Services</a></li>
+                <li><a href="#specialistes" data-i18n="nav.specialistes">Spécialistes</a></li>
+
+                <li><a href="#apropos" data-i18n="nav.apropos">À Propos</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: 1rem;">
+                <div class="nav-lang">
+                    <button class="lang-btn" id="langSwitcher" onclick="toggleLanguage()"
+                        style="border: 1px solid var(--border-color); background: white; cursor: pointer; font-size: 0.9rem; padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: 600;">FR</button>
+                </div>
+
+                <div id="authButtons" class="nav-auth">
+                    <button class="btn-login" onclick="window.location.href='login.html'"
+                        data-i18n="nav.login">Connexion</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'"
+                        data-i18n="nav.register">S'inscrire</button>
+                </div>
+
+                <div class="hamburger" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        let allDoctors = [];
+
+        async function fetchDoctors() {
+            try {
+                const response = await fetch('/api/patient/doctors');
+                const data = await response.json();
+                const grid = document.getElementById('doctorsGrid');
+
+                if (data.success && data.doctors.length > 0) {
+                    allDoctors = data.doctors;
+                    grid.innerHTML = data.doctors.map(doc => {
+                        const specialty = doc.specialty || 'Psychologue Clinicien';
+                        const bio = doc.bio || getNestedTranslation(currentLang, 'chat.sidebar.new_doctor');
+                        const profilePic = doc.profilePicture || `https://ui-avatars.com/api/?name=${doc.firstName}+${doc.lastName}&background=6366f1&color=fff`;
+
+                        return `
+                            <div class="service-card" style="text-align: center; border-radius: 20px; padding: 2.5rem 2rem; display: flex; flex-direction: column; align-items: center; transition: all 0.3s ease;">
+                                <div style="position: relative; margin-bottom: 1.5rem;">
+                                    <img src="${profilePic}" 
+                                         alt="${doc.firstName}" 
+                                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--white); box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+                                </div>
+                                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-dark);">Dr. ${doc.firstName} ${doc.lastName}</h3>
+                                <p style="color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">${specialty}</p>
+                                <p style="font-size: 0.95rem; color: var(--text-light); line-height: 1.6; margin-bottom: 2rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: 4.8em;">
+                                    ${bio}
+                                </p>
+                                <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: auto;">
+                                    <button onclick="openDoctorProfile('${doc._id}')" 
+                                             class="btn-secondary" 
+                                             style="flex: 1; padding: 0.8rem; border-radius: 50px; font-weight: 600;" data-i18n="common.view">
+                                        ${getNestedTranslation(currentLang, 'common.view')}
+                                    </button>
+                                    <button onclick="contactDoctor('${doc._id}', '${doc.firstName} ${doc.lastName}')" 
+                                             class="btn-primary" 
+                                             style="flex: 1.5; padding: 0.8rem; border-radius: 50px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" data-i18n="nav.contact">
+                                        <span>${getNestedTranslation(currentLang, 'nav.contact')}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center;" data-i18n="chat.sidebar.no_doctors">${getNestedTranslation(currentLang, 'chat.sidebar.no_doctors')}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('doctorsGrid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--error-color);">Impossible de charger la liste des spécialistes.</p>';
+            }
+        }
+
+        async function openDoctorProfile(doctorId) {
+            const doctor = allDoctors.find(d => String(d._id) === String(doctorId) || String(d.id) === String(doctorId));
+            if (!doctor) return;
+
+            document.getElementById('modalDoctorName').textContent = `Dr. ${doctor.firstName} ${doctor.lastName}`;
+            document.getElementById('modalDoctorSpecialty').textContent = doctor.specialty || 'Psychologue Clinicien';
+            document.getElementById('modalDoctorBio').textContent = doctor.bio || 'Aucune biographie disponible.';
+
+            const docsContainer = document.getElementById('modalDoctorDocs');
+            docsContainer.innerHTML = '';
+
+            if (doctor.certification) {
+                docsContainer.innerHTML += createDocButton('Certification / Diplôme', '📄', doctor.certification);
+            }
+            if (doctor.cv) {
+                docsContainer.innerHTML += createDocButton('Curriculum Vitae (CV)', '💼', doctor.cv);
+            }
+
+            if (!doctor.certification && !doctor.cv) {
+                docsContainer.innerHTML = `<p style="color: var(--text-light); font-size: 0.9rem; font-style: italic;" data-i18n="profile.no_doc">${getNestedTranslation(currentLang, 'profile.no_doc')}</p>`;
+            }
+
+            document.getElementById('modalContactBtn').onclick = () => {
+                closeDoctorProfile();
+                contactDoctor(doctor._id, `${doctor.firstName} ${doctor.lastName}`);
+            };
+
+            document.getElementById('doctorProfileModal').style.display = 'flex';
+        }
+
+        function createDocButton(title, icon, base64) {
+            return `
+                <div class="doc-btn" onclick="viewDocument('${base64}')">
+                    <span class="icon">${icon}</span>
+                    <div class="details">
+                        <span class="title">${title}</span>
+                        <span class="action" data-i18n="profile.view_doc">${getNestedTranslation(currentLang, 'profile.view_doc')}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewDocument(base64) {
+            const win = window.open();
+            win.document.write('<iframe src="' + base64 + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+        }
+
+        function closeDoctorProfile() {
+            document.getElementById('doctorProfileModal').style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        async function contactDoctor(id, name) {
+            const token = localStorage.getItem('token');
+            const doctor = allDoctors.find(d => String(d._id) === String(id) || String(d.id) === String(id));
+
+            if (!doctor || !doctor.phone) {
+                showNotification("Le numéro de téléphone du médecin n'est pas disponible.", 'error');
+                return;
+            }
+
+            // Save selected doctor and redirect to chat
+            localStorage.setItem('selectedDoctor', JSON.stringify({ id, name, phone: doctor.phone }));
+
+            // Redirect to Chat Page
+            window.location.href = 'patient-consultations.html';
+        }
+
+        function handleStartConsultation() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const element = document.getElementById('specialistes');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                window.location.href = 'register.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            // const API_URL = '/api'; // Removed as it's not used in this block anymore
+
+            // Mobile Menu Toggle
+            const menu = document.querySelector('#mobile-menu');
+            const menuLinks = document.querySelector('.nav-links');
+            const navAuth = document.querySelector('.nav-auth');
+
+            menu.addEventListener('click', () => {
+                menu.classList.toggle('active');
+                menuLinks.classList.toggle('active');
+                navAuth.classList.toggle('active');
+            });
+
+            // Close mobile menu when a link is clicked
+            document.querySelectorAll('.nav-links a').forEach(n => n.addEventListener('click', () => {
+                menu.classList.remove('active');
+                menuLinks.classList.remove('active');
+                navAuth.classList.remove('active');
+            }));
+
+            // Auth State
+            if (token && userStr) {
+                const user = JSON.parse(userStr);
+                const authContainer = document.getElementById('authButtons');
+
+                if (user.role === 'doctor') {
+                    authContainer.innerHTML = `
+                        <button onclick="window.location.href='profile.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.profile">Profil</button>
+                        <button onclick="window.location.href='doctor-patients.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.my_patients">Mes Patients</button>
+                        <button onclick="logout()" class="btn-register" style="background: #ef4444; border: none; padding: 0.6rem 1.2rem;" data-i18n="nav.logout">Déconnexion</button>
+                    `;
+                } else if (user.role === 'patient') {
+                    authContainer.innerHTML = `
+                        <button onclick="window.location.href='profile.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.profile">Profil</button>
+                        <button onclick="window.location.href='patient-dashboard.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.dashboard">Tableau de bord</button>
+                        <button onclick="logout()" class="btn-register" style="background: #ef4444; border: none; padding: 0.6rem 1.2rem;" data-i18n="nav.logout">Déconnexion</button>
+                    `;
+                } else if (user.role === 'admin') {
+                    authContainer.innerHTML = `
+                        <button onclick="window.location.href='profile.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.profile">Profil</button>
+                        <button onclick="window.location.href='admin-dashboard.html'" class="btn-login" style="background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color); margin-right: 10px;" data-i18n="nav.dashboard">Dashboard</button>
+                        <button onclick="logout()" class="btn-register" style="background: #ef4444; border: none; padding: 0.6rem 1.2rem;" data-i18n="nav.logout">Déconnexion</button>
+                    `;
+                }
+            }
+
+            // Fetch Doctors
+            fetchDoctors();
+        });
+
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById('doctorProfileModal');
+            if (event.target == modal) {
+                closeDoctorProfile();
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Hero Section -->
+    <section class="hero" id="accueil">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 data-i18n="hero.title">Votre bien-être mental, <br><span class="highlight"
+                        data-i18n="hero.title_highlight">notre priorité</span></h1>
+                <p data-i18n="hero.subtitle">Découvrez un espace d'écoute et de soutien avec des professionnels
+                    qualifiés. Consultez depuis chez
+                    vous, en toute sécurité.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="handleStartConsultation()" data-i18n="hero.btn_start">Commencer
+                        ma
+                        consultation</button>
+                    <button class="btn-secondary" onclick="window.location.href='#services'"
+                        data-i18n="hero.btn_how">Comment ça marche</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=600&fit=crop"
+                    alt="Psychologue professionnel">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <h2 data-i18n="services.title">Nos Services</h2>
+            <p data-i18n="services.subtitle">Des solutions adaptées à vos besoins pour votre bien-être mental</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon" style="color: white;"><i class="fas fa-brain"></i></div>
+                <h3 data-i18n="services.individual_title">التدخل المعرفي السلوكي</h3>
+                <p data-i18n="services.individual_desc">المحتوى: جلسات تركز على تعزيز المرونة النفسية وتطوير استراتيجيات التكيف الناضجة لضمان استعادة التوازن النفسي.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="color: white;"><i class="fas fa-link"></i></div>
+                <h3 data-i18n="services.couple_title">ديناميكية الارتباط والتواصل.</h3>
+                <p data-i18n="services.couple_desc">المحتوى: تحليل أنماط الارتباط العاطفي ومعالجة الجمود التفاعلي بين الشريكين.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon" style="color: white;"><i class="fas fa-project-diagram"></i></div>
+                <h3 data-i18n="services.family_title">الاتزان والضبط النسقي</h3>
+                <p data-i18n="services.family_desc">المحتوى: دراسة التفاعلات الأسرية وإعادة رسم الحدود النفسية بين الأفراد. نسعى لتصحيح الأدوار داخل النسق الأسري وتوفير بيئة نمو صحية ومستقرة.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Doctors Section -->
+    <section class="doctors" id="specialistes" style="padding: 6rem 2rem; background: var(--bg-light);">
+        <div class="section-header">
+            <h2 data-i18n="sections.specialists">Nos Spécialistes</h2>
+            <p data-i18n="sections.specialists_subtitle">Rencontrez nos psychologues qualifiés prêts à vous écouter</p>
+        </div>
+        <div class="services-grid" id="doctorsGrid"
+            style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            <!-- Doctors will be loaded here -->
+            <p style="grid-column: 1/-1; text-align: center; color: var(--text-light);" data-i18n="common.loading">
+                Chargement des spécialistes...
+            </p>
+        </div>
+    </section>
+
+
+
+    <!-- About Section -->
+    <section class="about" id="apropos">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&h=600&fit=crop" alt="Équipe">
+            </div>
+            <div class="about-content">
+                <h2 data-i18n="about.title">À Propos de Nous</h2>
+                <p data-i18n="about.desc1">Notre plateforme est une plateforme innovante qui facilite l'accès aux soins
+                    psychologiques de qualité.
+                    Notre mission est de rendre le soutien psychologique accessible à tous, partout et à tout moment.
+                </p>
+                <p data-i18n="about.desc2">Nous collaborons avec des psychologues certifiés et expérimentés qui
+                    s'engagent à vous offrir un
+                    accompagnement professionnel, confidentiel et bienveillant.</p>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label" data-i18n="about.stats.patients">Patients Satisfaits</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label" data-i18n="about.stats.psychologists">Psychologues</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label" data-i18n="about.stats.satisfaction">Taux de Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo-text" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <i class="fas fa-shield-heart"></i>
+                    <span>طمئن</span>
+                </div>
+                <p data-i18n="footer.brand_desc">Votre partenaire de confiance pour votre bien-être mental. Ensemble,
+                    construisons un avenir plus
+                    serein.</p>
+                <div class="social-links">
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="nav.services">Services</h4>
+                <ul>
+                    <li><a href="#" data-i18n="services.individual_title">التدخل المعرفي السلوكي</a></li>
+                    <li><a href="#" data-i18n="services.couple_title">ديناميكية الارتباط والتواصل</a></li>
+                    <li><a href="#" data-i18n="services.family_title">الاتزان والضبط النسقي</a></li>
+                    <li><a href="#" data-i18n="nav.services">Consultation en ligne</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footer.company">Entreprise</h4>
+                <ul>
+                    <li><a href="#apropos" data-i18n="nav.apropos">À Propos</a></li>
+                    <li><a href="#" data-i18n="footer.team">Notre Équipe</a></li>
+                    <li><a href="#" data-i18n="footer.careers">Carrières</a></li>
+                    <li><a href="#" data-i18n="footer.blog">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footer.support">Support</h4>
+                <ul>
+                    <li><a href="#" data-i18n="footer.help_center">Centre d'aide</a></li>
+                    <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                    <li><a href="#" data-i18n="footer.privacy">Confidentialité</a></li>
+                    <li><a href="#" data-i18n="footer.terms">Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026. <span data-i18n="footer.rights">Tous droits réservés.</span> <span
+                    data-i18n="footer.made_with">Made with ❤️ by Yassine Kadri - Protium agency.</span></p>
+        </div>
+    </footer>
+
+    <!-- Doctor Profile Modal -->
+    <div id="doctorProfileModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modalDoctorName" style="font-size: 1.5rem; margin-bottom: 0.25rem;">Dr. Name</h3>
+                    <p id="modalDoctorSpecialty" style="font-size: 0.9rem; opacity: 0.9;">Specialty</p>
+                </div>
+                <button onclick="closeDoctorProfile()" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="doc-section">
+                    <h4><span class="icon">📝</span> <span data-i18n="profile.bio">Bio Professionnelle</span></h4>
+                    <p id="modalDoctorBio" style="color: var(--text-light); line-height: 1.6;"></p>
+                </div>
+
+                <div class="doc-section">
+                    <h4><span class="icon">🎓</span> <span data-i18n="profile.professional_docs">Qualifications &
+                            Documents</span></h4>
+                    <div id="modalDoctorDocs">
+                        <!-- Doc buttons will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeDoctorProfile()" class="btn-secondary"
+                    style="padding: 0.75rem 1.5rem;" data-i18n="common.close">Fermer</button>
+                <button id="modalContactBtn" class="btn-primary" style="padding: 0.75rem 2rem;" data-i18n="nav.contact">Contacter</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

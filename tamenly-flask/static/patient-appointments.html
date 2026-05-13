@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <title>Rendez-vous - طمئن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/i18n.js"></script>
+    <script src="js/notifications.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #e0e7ff;
+            --bg: #f1f5f9;
+            --white: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(99,102,241,0.08);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo img { height: 40px; }
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-nav {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-fill {
+            background: var(--gradient);
+            border: none;
+            color: white;
+        }
+        .btn-fill:hover { opacity: 0.9; }
+
+        /* ─── Hero Banner ─── */
+        .hero {
+            background: var(--gradient);
+            padding: 3rem 5%;
+            color: white;
+            text-align: center;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .hero p { opacity: 0.85; font-size: 1.05rem; }
+
+        /* ─── Tabs ─── */
+        .tabs-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.6rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+            color: var(--text-muted);
+            background: transparent;
+        }
+        .tab-btn.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* ─── Doctor search ─── */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .search-bar i { color: var(--text-muted); }
+        .search-bar input {
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 100%;
+            color: var(--text);
+        }
+
+        /* ─── Doctor List ─── */
+        .doctors-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .doctor-row {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .doctor-row:hover { border-color: var(--primary-light); }
+        .doctor-row.expanded { border-color: var(--primary); }
+
+        .doctor-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            gap: 12px;
+        }
+
+        .doctor-identity {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .doc-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .doc-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .doc-specialty {
+            font-size: 0.82rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .doc-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-days { background: #f0f9ff; color: #0369a1; }
+        .badge-mode { background: #f0fdf4; color: #15803d; }
+
+        .expand-indicator {
+            width: 34px;
+            height: 34px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        .doctor-row.expanded .expand-indicator { transform: rotate(180deg); }
+
+        /* ─── Booking Panel ─── */
+        .booking-panel {
+            display: none;
+            padding: 0 1.5rem 1.5rem;
+            border-top: 1px dashed var(--border);
+            animation: slideDown 0.25s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .doctor-row.expanded .booking-panel { display: block; }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.25rem;
+        }
+        @media (max-width: 640px) { .booking-grid { grid-template-columns: 1fr; } }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            color: var(--text);
+        }
+        .form-group input[type="date"]:focus { border-color: var(--primary); }
+
+        .slots-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 44px;
+            align-content: flex-start;
+        }
+
+        .slot-chip {
+            padding: 7px 16px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+        .slot-chip:hover { border-color: var(--primary); background: var(--primary-light); }
+        .slot-chip.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .no-slots-msg {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .booking-action {
+            margin-top: 1.25rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-book {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-book:hover { opacity: 0.9; }
+        .btn-book:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        /* ─── My Appointments Tab ─── */
+        .appointments-list { display: flex; flex-direction: column; gap: 16px; }
+
+        .appointment-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            gap: 12px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s;
+        }
+        .appointment-card:hover { transform: translateX(4px); }
+        .appointment-card.status-cancelled { border-left-color: #ef4444; }
+        .appointment-card.status-confirmed { border-left-color: #22c55e; }
+        .appointment-card.status-completed { border-left-color: #94a3b8; }
+
+        .appt-left { display: flex; align-items: center; gap: 1rem; }
+        .appt-avatar {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.2rem; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .appt-name { font-weight: 700; font-size: 1rem; }
+        .appt-spec { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+        .appt-time-block { text-align: right; }
+        .appt-date { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+        .appt-time { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-confirmed { background: #dcfce7; color: #166534; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .badge-completed { background: #f1f5f9; color: #475569; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .empty-state .empty-icon { font-size: 3.5rem; color: #cbd5e1; margin-bottom: 1rem; }
+        .empty-state h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .empty-state p { color: var(--text-muted); }
+
+        /* ─── Loading ─── */
+        .spinner {
+            display: flex; align-items: center; justify-content: center;
+            padding: 4rem 0; gap: 12px; color: var(--text-muted);
+        }
+        .spinner i { font-size: 1.5rem; color: var(--primary); }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <img src="images/image.png" alt="طمئن">
+        </a>
+        <div class="nav-actions">
+            <a href="patient-consultations.html" class="btn-nav btn-ghost"><i class="fas fa-comments"></i> Chat</a>
+            <a href="profile.html" class="btn-nav btn-ghost"><i class="fas fa-user"></i> Profil</a>
+            <button onclick="logout()" class="btn-nav btn-ghost">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div style="max-width: 1100px; margin: 0 auto; text-align: left; padding-bottom: 1rem;">
+            <a href="patient-dashboard.html" style="color: white; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-arrow-left"></i> Retour au Tableau de Bord
+            </a>
+        </div>
+        <h1><i class="fas fa-calendar-check" style="font-size:1.8rem; margin-bottom:0.5rem; display:block;"></i>Rendez-vous</h1>
+        <p>Parcourez nos spécialistes et réservez votre créneau en quelques secondes.</p>
+    </div>
+
+    <div class="tabs-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('browse')" id="tab-browse">
+                <i class="fas fa-stethoscope"></i> Nos Spécialistes
+            </button>
+            <button class="tab-btn" onclick="switchTab('mine')" id="tab-mine">
+                <i class="fas fa-calendar-alt"></i> Mes Rendez-vous
+            </button>
+        </div>
+
+        <!-- ─── Tab 1: Browse & Book ─── -->
+        <div id="panel-browse">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher un médecin ou une spécialité..." oninput="filterDoctors()">
+            </div>
+            <div class="doctors-list" id="doctorsList">
+                <div class="spinner"><i class="fas fa-spinner fa-spin"></i> Chargement des médecins...</div>
+            </div>
+        </div>
+
+        <!-- ─── Tab 2: My Appointments ─── -->
+        <div id="panel-mine" style="display:none;">
+            <div class="appointments-list" id="myAppointmentsList">
+                <div class="spinner"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // ─── Tab Switching ───
+        function switchTab(tab) {
+            ['browse', 'mine'].forEach(t => {
+                document.getElementById(`panel-${t}`).style.display = t === tab ? 'block' : 'none';
+                document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+            });
+            if (tab === 'mine') loadMyAppointments();
+        }
+
+        // ─── Days Mapping ───
+        const daysMap = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        const daysLabels = {
+            dimanche: 'Dim', lundi: 'Lun', mardi: 'Mar', mercredi: 'Mer',
+            jeudi: 'Jeu', vendredi: 'Ven', samedi: 'Sam'
+        };
+
+        function getActiveDays(availability) {
+            if (!availability) return [];
+            try {
+                const sch = JSON.parse(availability);
+                return Object.keys(sch).filter(d => sch[d]?.active && sch[d]?.slots?.length > 0);
+            } catch {
+                return [];
+            }
+        }
+
+        // ─── All Doctors Data ───
+        let allDoctors = [];
+
+        async function loadDoctors() {
+            try {
+                const res = await fetch(`${API}/patient/doctors`);
+                const data = await res.json();
+                if (data.success) {
+                    allDoctors = data.doctors;
+                    renderDoctors(allDoctors);
+                }
+            } catch (e) {
+                document.getElementById('doctorsList').innerHTML =
+                    `<div class="empty-state"><div class="empty-icon"><i class="fas fa-exclamation-circle"></i></div><h3>Erreur de chargement</h3><p>Impossible de charger la liste des médecins.</p></div>`;
+            }
+        }
+
+        function filterDoctors() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allDoctors.filter(d =>
+                `${d.firstName} ${d.lastName}`.toLowerCase().includes(q) ||
+                (d.specialty || '').toLowerCase().includes(q)
+            );
+            renderDoctors(filtered);
+        }
+
+        function renderDoctors(doctors) {
+            const list = document.getElementById('doctorsList');
+            if (!doctors.length) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-user-md"></i></div><h3>Aucun médecin trouvé</h3></div>`;
+                return;
+            }
+
+            list.innerHTML = doctors.map(doc => {
+                const avatar = doc.profilePicture ||
+                    `https://ui-avatars.com/api/?name=${doc.firstName}+${doc.lastName}&background=6366f1&color=fff`;
+                const activeDays = getActiveDays(doc.availability);
+                const dayBadges = activeDays.slice(0, 5).map(d =>
+                    `<span class="badge badge-days">${daysLabels[d] || d}</span>`).join('');
+                const modeLabel = doc.consultationMode === 'presence' ? 'Cabinet' :
+                    doc.consultationMode === 'both' ? 'En ligne & Cabinet' : 'En ligne';
+
+                return `
+                <div class="doctor-row" id="row-${doc._id}">
+                    <div class="doctor-row-header" onclick="toggleDoctor('${doc._id}', ${JSON.stringify(doc).replace(/"/g, '&quot;')})">
+                        <div class="doctor-identity">
+                            <img src="${avatar}" alt="Dr. ${doc.firstName}" class="doc-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${doc.firstName}+${doc.lastName}&background=6366f1&color=fff'">
+                            <div>
+                                <div class="doc-name">Dr. ${doc.firstName} ${doc.lastName}</div>
+                                <div class="doc-specialty">${doc.specialty || 'Psychologue'}</div>
+                            </div>
+                        </div>
+                        <div class="doc-tags">
+                            ${dayBadges || '<span class="no-slots-msg">Aucun créneau</span>'}
+                            <span class="badge badge-mode">${modeLabel}</span>
+                        </div>
+                        <div class="expand-indicator" id="indicator-${doc._id}">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="booking-panel" id="booking-${doc._id}">
+                        <div class="booking-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Date</label>
+                                <input type="date" id="date-${doc._id}" min="${new Date().toISOString().split('T')[0]}" onchange="updateSlots('${doc._id}')">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-clock"></i> Créneaux disponibles</label>
+                                <div class="slots-grid" id="slots-${doc._id}">
+                                    <p class="no-slots-msg">Sélectionnez d'abord une date</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="booking-action">
+                            <button class="btn-book" id="btn-${doc._id}" disabled onclick="confirmBooking('${doc._id}')">
+                                <i class="fas fa-check-circle"></i> Confirmer le Rendez-vous
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ─── Expand/Collapse Doctor ───
+        const doctorDataMap = {};
+
+        function toggleDoctor(id, doc) {
+            doctorDataMap[id] = doc;
+            const row = document.getElementById(`row-${id}`);
+            const isExpanded = row.classList.contains('expanded');
+            
+            // Close all rows
+            document.querySelectorAll('.doctor-row.expanded').forEach(r => r.classList.remove('expanded'));
+
+            if (!isExpanded) {
+                row.classList.add('expanded');
+                row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Reset slots state
+            document.getElementById(`date-${id}`).value = '';
+            document.getElementById(`slots-${id}`).innerHTML = '<p class="no-slots-msg">Sélectionnez d\'abord une date</p>';
+            document.getElementById(`btn-${id}`).disabled = true;
+            selectedSlots[id] = null;
+        }
+
+        // ─── Slot Selection State ───
+        const selectedSlots = {};
+
+        function updateSlots(docId) {
+            const dateVal = document.getElementById(`date-${docId}`).value;
+            const slotsContainer = document.getElementById(`slots-${docId}`);
+            selectedSlots[docId] = null;
+            document.getElementById(`btn-${docId}`).disabled = true;
+
+            if (!dateVal) return;
+
+            const date = new Date(dateVal);
+            const dayName = daysMap[date.getDay()];
+            const doc = doctorDataMap[docId];
+
+            let schedule = {};
+            try {
+                if (doc.availability && doc.availability.startsWith('{')) {
+                    schedule = JSON.parse(doc.availability);
+                }
+            } catch (e) {}
+
+            const day = schedule[dayName];
+
+            if (!day || !day.active || !day.slots || day.slots.length === 0) {
+                slotsContainer.innerHTML = `<p class="no-slots-msg"><i class="fas fa-calendar-times"></i> Aucun créneau disponible ce jour (${daysLabels[dayName] || dayName})</p>`;
+                return;
+            }
+
+            slotsContainer.innerHTML = day.slots.map(slot =>
+                `<div class="slot-chip" onclick="selectSlot(this, '${docId}', '${slot}')">${slot}</div>`
+            ).join('');
+        }
+
+        function selectSlot(el, docId, slot) {
+            document.querySelectorAll(`#slots-${docId} .slot-chip`).forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedSlots[docId] = slot;
+            document.getElementById(`btn-${docId}`).disabled = false;
+        }
+
+        async function confirmBooking(docId) {
+            const dateVal = document.getElementById(`date-${docId}`).value;
+            const slot = selectedSlots[docId];
+            if (!dateVal || !slot) return;
+
+            const btn = document.getElementById(`btn-${docId}`);
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Réservation...';
+
+            const startTime = new Date(`${dateVal}T${slot}:00`);
+            const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+            const doc = doctorDataMap[docId];
+            let type = doc.consultationMode === 'presence' ? 'presence' : 'online';
+
+            try {
+                const res = await fetch(`${API}/appointments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ doctor: docId, startTime: startTime.toISOString(), endTime: endTime.toISOString(), type })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showNotification('Rendez-vous réservé avec succès ! 🎉', 'success');
+                    document.getElementById(`row-${docId}`).classList.remove('expanded');
+                    selectedSlots[docId] = null;
+                    setTimeout(() => switchTab('mine'), 1500);
+                } else {
+                    showNotification(data.message || 'Erreur lors de la réservation', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer le Rendez-vous';
+                }
+            } catch (e) {
+                showNotification('Erreur de connexion', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer le Rendez-vous';
+            }
+        }
+
+        // ─── My Appointments ───
+        let myAppointmentsLoaded = false;
+
+        async function loadMyAppointments() {
+            if (myAppointmentsLoaded) return;
+            myAppointmentsLoaded = true;
+
+            const container = document.getElementById('myAppointmentsList');
+            try {
+                const res = await fetch(`${API}/appointments/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (!data.success || !data.appointments.length) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-calendar-day"></i></div>
+                            <h3>Aucun rendez-vous</h3>
+                            <p>Vous n'avez pas encore de rendez-vous. Parcourez nos spécialistes pour en prendre un.</p>
+                            <button onclick="switchTab('browse')" style="margin-top:1rem; padding:0.75rem 1.5rem; background:linear-gradient(135deg,#6366f1,#a855f7); color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;">
+                                Trouver un Médecin
+                            </button>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = data.appointments.map(apt => {
+                    const d = new Date(apt.startTime);
+                    const dateStr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                    const statusMap = { pending: { label: 'En attente', cls: 'badge-pending' }, confirmed: { label: 'Confirmé', cls: 'badge-confirmed' }, cancelled: { label: 'Annulé', cls: 'badge-cancelled' }, completed: { label: 'Terminé', cls: 'badge-completed' } };
+                    const { label, cls } = statusMap[apt.status] || { label: apt.status, cls: 'badge-pending' };
+                    const avatarSrc = apt.doctor?.profilePicture ||
+                        `https://ui-avatars.com/api/?name=${apt.doctor?.firstName}+${apt.doctor?.lastName}&background=6366f1&color=fff`;
+
+                    return `
+                        <div class="appointment-card status-${apt.status}">
+                            <div class="appt-left">
+                                <img src="${avatarSrc}" class="appt-avatar" style="width:52px;height:52px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='<div class=appt-avatar>${apt.doctor?.firstName?.[0] || '?'}</div>'">
+                                <div>
+                                    <div class="appt-name">Dr. ${apt.doctor?.firstName} ${apt.doctor?.lastName}</div>
+                                    <div class="appt-spec">${apt.doctor?.specialty || 'Spécialiste'}</div>
+                                    <div class="appt-spec"><i class="fas fa-${apt.type === 'presence' ? 'hospital' : 'video'}" style="margin-right:4px;"></i>${apt.type === 'presence' ? 'En cabinet' : 'En ligne'}</div>
+                                </div>
+                            </div>
+                            <div class="appt-time-block">
+                                <div class="appt-date">${dateStr}</div>
+                                <div class="appt-time"><i class="fas fa-clock" style="margin-right:4px;"></i>${timeStr}</div>
+                                <div class="status-badge ${cls}">${label}</div>
+                            </div>
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-exclamation-triangle"></i></div><h3>Erreur</h3><p>Impossible de charger vos rendez-vous.</p></div>`;
+            }
+        }
+
+        // ─── Init ───
+        loadDoctors();
+    </script>
+</body>
+
+</html>

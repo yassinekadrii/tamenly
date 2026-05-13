@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <title>Tableau de Bord - طمئن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/notifications.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #e0e7ff;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* ─── Navbar ─── */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+        .user-profile { display: flex; align-items: center; gap: 0.75rem; padding-left: 1.5rem; border-left: 1px solid var(--border); }
+        .avatar-sm { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+
+        /* ─── Main Content ─── */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem 5rem;
+        }
+
+        .welcome-section { margin-bottom: 2.5rem; }
+        .welcome-section h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .welcome-section p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ─── Cards ─── */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+
+        /* ─── Mood Tracker ─── */
+        .mood-box {
+            background: var(--gradient);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .mood-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid transparent;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-btn:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.1); }
+        .mood-btn.selected { background: white; border-color: white; transform: scale(1.1); }
+
+        /* ─── Quick Summary ─── */
+        .summary-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: 0.2s;
+        }
+        .summary-card:hover { border-color: var(--primary); transform: translateX(5px); }
+        .summary-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+
+        .btn-view-all { color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+
+        /* ─── Custom Styles ─── */
+        .btn-primary-gradient {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary-gradient:hover { opacity: 0.9; transform: translateY(-2px); }
+
+
+        /* Finding doctor section in sidebar */
+        .doctor-promo {
+            background: #eff6ff;
+            border: 1px dashed var(--primary);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">طمئن</a>
+        <div class="nav-links">
+            <a href="index.html" data-i18n="nav.accueil">Accueil</a>
+            <a href="patient-consultations.html" data-i18n="nav.dashboard">Chat</a>
+            <a href="patient-appointments.html" data-i18n="nav.appointments">Rendez-vous</a>
+            <div class="user-profile">
+                <a href="profile.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <span id="userNameDisplay" style="font-weight: 600;">...</span>
+                    <img id="userAvatarDisplay" src="" class="avatar-sm" onerror="this.src='https://ui-avatars.com/api/?name=User&background=6366f1&color=fff'">
+                </a>
+                <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer; margin-left: 1rem;"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="welcome-section">
+            <h1 id="welcomeText" data-i18n="dashboard.welcome">Bonjour !</h1>
+            <p data-i18n="mood.subtitle">Suivez votre parcours de bien-être</p>
+        </div>
+
+        <div class="grid-layout">
+            <!-- Left Column: Mood & Charts -->
+            <div class="main-column">
+                <!-- Mood Tracker -->
+                <div class="mood-box">
+                    <h2 data-i18n="mood.title">Comment allez-vous aujourd'hui ?</h2>
+                    <div class="mood-options" id="moodOptions">
+                        <button class="mood-btn" onclick="logMood(2, 'Super', '🤩')" title="Super">🤩</button>
+                        <button class="mood-btn" onclick="logMood(1, 'Bien', '😊')" title="Bien">😊</button>
+                        <button class="mood-btn" onclick="logMood(0, 'Neutre', '😐')" title="Neutre">😐</button>
+                        <button class="mood-btn" onclick="logMood(-1, 'Triste', '😔')" title="Triste">😔</button>
+                        <button class="mood-btn" onclick="logMood(-2, 'Terrible', '😫')" title="Terrible">😫</button>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-chart-line" style="color:#6366f1;"></i> <span data-i18n="mood.chart_title">Courbe de bien-être</span></div>
+                    </div>
+                    <div style="height: 250px;">
+                        <canvas id="moodChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Quick Status -->
+            <div class="side-column">
+                <!-- Next Appointment -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-calendar-check" style="color:#10b981;"></i> <span data-i18n="dashboard.next_appointment">Prochain RDV</span></div>
+                        <a href="patient-appointments.html" class="btn-view-all" data-i18n="dashboard.view_all">Voir tout</a>
+                    </div>
+                    <div id="nextAppointmentContainer">
+                        <p style="color:var(--text-muted); font-size:0.9rem;" data-i18n="dashboard.no_upcoming">Aucun rendez-vous prévu.</p>
+                    </div>
+                </div>
+
+                <!-- Preliminary Assessment -->
+                <div class="card" style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border: none;">
+                    <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="font-size: 1.5rem;"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <h3 style="margin:0; font-size: 1.1rem;" data-i18n="assessment.title">Test d'Évaluation Rapide</h3>
+                            <p style="margin:0.2rem 0 0; font-size: 0.85rem; opacity: 0.9;" data-i18n="assessment.subtitle">Faites le point sur votre état mental en 2 minutes.</p>
+                        </div>
+                        <a href="patient-assessment.html" class="btn-action" style="background: white; color: #4f46e5; border: none; text-align: center; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 0.8rem; border-radius: 12px; margin-top: 0.5rem;" data-i18n="assessment.cta">Passer le test</a>
+                    </div>
+                </div>
+
+                <!-- Latest Prescription -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-file-prescription" style="color:#f59e0b;"></i> <span data-i18n="dashboard.latests_prescriptions">Dernières ordonnances</span></div>
+                    </div>
+                    <div id="latestPrescriptionContainer">
+                         <p style="color:var(--text-muted); font-size:0.9rem;" data-i18n="common.loading">Chargement...</p>
+                    </div>
+                </div>
+
+                <!-- Find Doctor Promo -->
+                <div class="doctor-promo">
+                    <h3 style="margin-bottom: 0.5rem;" data-i18n="dashboard.find_doctor">Besoin d'un spécialiste ?</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Consultez nos experts qualifiés en ligne ou en cabinet.</p>
+                    <a href="patient-appointments.html?tab=browse" class="btn-primary-gradient" style="display:block; text-decoration:none;">Parcourir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token) window.location.href = 'login.html';
+
+        // Set Identity
+        document.getElementById('userNameDisplay').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('welcomeText').textContent = `Bonjour, ${user.firstName} !`;
+        if (user.profilePicture) document.getElementById('userAvatarDisplay').src = user.profilePicture;
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // ─── Mood Logic ───
+        let moodChartInstance = null;
+
+        async function logMood(score, label, emoji) {
+            try {
+                // UI Highlight
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+                event.currentTarget.classList.add('selected');
+
+                const res = await fetch(`${API}/moods`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ score, label, emoji })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showNotification(getNestedTranslation(currentLang, 'mood.log_success') || 'Humeur enregistrée !', 'success');
+                    loadMoodHistory(); // Refresh chart
+                }
+            } catch (e) {
+                console.error('Mood error:', e);
+                showNotification(getNestedTranslation(currentLang, 'common.error') || 'Erreur', 'error');
+            }
+        }
+
+        async function loadMoodHistory() {
+            try {
+                const res = await fetch(`${API}/moods/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (!data.success || !data.moods || data.moods.length === 0) return;
+
+                const canvas = document.getElementById('moodChart');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                // Sort by date ascending for the chart
+                const sortedMoods = [...data.moods].reverse();
+                
+                const labels = sortedMoods.map(m => new Date(m.date).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'fr-FR', { day: 'numeric', month: 'short' }));
+                const scores = sortedMoods.map(m => m.score);
+
+                if (moodChartInstance) moodChartInstance.destroy();
+
+                moodChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: getNestedTranslation(currentLang, 'mood.chart_title') || 'Bien-être',
+                            data: scores,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#6366f1',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                min: -2,
+                                max: 2,
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function(value) {
+                                        const emojis = { '2': '🤩', '1': '😊', '0': '😐', '-1': '😔', '-2': '😫' };
+                                        return emojis[value] || value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('Chart error:', e);
+            }
+        }
+
+
+        // ─── Data Loading ───
+        async function loadDashboardData() {
+            // Next Appointment
+            try {
+                const res = await fetch(`${API}/appointments/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const container = document.getElementById('nextAppointmentContainer');
+                
+                const upcoming = data.appointments.find(a => a.status === 'confirmed' || a.status === 'pending');
+                if (upcoming) {
+                    const d = new Date(upcoming.startTime);
+                    container.innerHTML = `
+                        <a href="patient-appointments.html" class="summary-card">
+                            <div class="summary-icon" style="background:#dcfce7; color:#166534;"><i class="fas fa-video"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:0.95rem;">Dr. ${upcoming.doctor.lastName}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                        </a>
+                    `;
+                }
+            } catch(e) {}
+
+            // Latest Prescriptions
+            try {
+                const res = await fetch(`${API}/prescriptions/patient/${user.id || user._id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const container = document.getElementById('latestPrescriptionContainer');
+                
+                if (data.prescriptions && data.prescriptions.length > 0) {
+                    container.innerHTML = data.prescriptions.slice(0, 3).map(p => `
+                        <a href="patient-consultations.html" class="summary-card" style="margin-bottom: 0.8rem;">
+                            <div class="summary-icon" style="background:#fef3c7; color:#92400e;"><i class="fas fa-file-medical"></i></div>
+                            <div>
+                                <div style="font-weight:700; font-size:0.95rem;">Dr. ${p.doctor.lastName}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">${new Date(p.createdAt).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Aucune ordonnance reçue.</p>';
+                }
+            } catch(e) {}
+        }
+
+        // Init
+        loadDashboardData();
+        loadMoodHistory();
+    </script>
+</body>
+</html>

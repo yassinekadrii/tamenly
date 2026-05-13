@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <title>Mon Planning - طمئن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-blur: blur(12px);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), border 1px solid rgba(255,255,255,0.8);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .day-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255,255,255,0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .day-row:hover {
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .day-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .day-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .day-date-badge {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 20px;
+            padding: 0.15rem 0.55rem;
+            white-space: nowrap;
+        }
+
+        .day-date-badge.today {
+            background: rgba(99, 102, 241, 0.18);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .week-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .week-nav button {
+            background: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .week-nav button:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .week-nav button:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .week-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .time-inputs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .time-inputs.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .slots-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+        }
+
+        .no-slots {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-style: italic;
+            padding: 0.2rem 0;
+        }
+
+        .slot-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-dark);
+            padding: 0.4rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.2s;
+        }
+
+        .slot-chip:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .slot-remove {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .slot-remove:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-slot-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .new-slot-input {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: white;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+            width: 90px;
+        }
+
+        .new-slot-input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .btn-add-slot {
+            background: var(--white);
+            color: var(--primary-color);
+            border: 1px dashed var(--primary-color);
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add-slot:hover {
+            background: var(--primary-color);
+            color: white;
+            border-style: solid;
+        }
+
+        .time-separator {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: var(--error-color);
+            border: 1px solid #fee2e2;
+        }
+
+        .success {
+            background: #ecfdf5;
+            color: var(--success-color);
+            border: 1px solid #d1fae5;
+        }
+
+        .lang-switcher {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .lang-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 600px) {
+            .day-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .time-inputs {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+        <a href="index.html" class="logo" style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color); text-decoration: none;">طمئن</a>
+        <div class="nav-links" style="display: flex; align-items: center; gap: 2rem;">
+            <a href="doctor-patients.html" style="text-decoration: none; color: var(--text-light); font-weight: 500;" data-i18n="nav.accueil">Chat</a>
+            <a href="doctor-appointments.html" style="text-decoration: none; color: var(--text-light); font-weight: 500;" data-i18n="nav.appointments">Rendez-vous</a>
+            <a href="doctor-schedule.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;" data-i18n="nav.schedule">Planning</a>
+            <button onclick="logout()" style="background:none; border:none; color: #ef4444; cursor:pointer; font-weight:600; margin-left: 1rem;"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 80px;">
+        <div class="lang-switcher">
+            <button class="lang-btn" id="langSwitcher" onclick="toggleLanguage()">FR</button>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem; text-align: left;">
+            <a href="doctor-patients.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                ← Retour au Chat
+            </a>
+        </div>
+        <h2 data-i18n="schedule.title">Gérer mes disponibilités</h2>
+        <p class="subtitle" data-i18n="schedule.subtitle">Définissez vos heures de consultation</p>
+
+        <!-- Week Navigator -->
+        <div class="week-nav">
+            <button id="btnPrevWeek" onclick="changeWeek(-1)" title="Semaine précédente">&#8592;</button>
+            <span class="week-label" id="weekLabel"></span>
+            <button id="btnNextWeek" onclick="changeWeek(1)" title="Semaine suivante">&#8594;</button>
+        </div>
+
+        <div id="messageBox" class="message"></div>
+
+        <form id="scheduleForm" onsubmit="handleSave(event)">
+            <div id="daysContainer">
+                <!-- Days will be generated by JS -->
+            </div>
+            <button type="submit" class="btn-submit" data-i18n="schedule.save">Enregistrer</button>
+        </form>
+        
+        <a href="doctor-patients.html" class="back-link" data-i18n="schedule.back">Retour</a>
+    </div>
+
+
+    <script src="js/notifications.js"></script>
+    <script src="js/i18n.js"></script>
+    <script>
+        const API_URL = '/api';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token || user.role !== 'doctor') {
+            window.location.href = 'login.html';
+        }
+
+        // Day keys and fallback labels (used if i18n not loaded yet)
+        const days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+        const dayFallbacks = {
+            lundi: 'Lundi', mardi: 'Mardi', mercredi: 'Mercredi',
+            jeudi: 'Jeudi', vendredi: 'Vendredi', samedi: 'Samedi', dimanche: 'Dimanche'
+        };
+
+        // Short names for the date badge
+        const dayShortNames = {
+            lundi: 'Lun', mardi: 'Mar', mercredi: 'Mer',
+            jeudi: 'Jeu', vendredi: 'Ven', samedi: 'Sam', dimanche: 'Dim'
+        };
+
+        // Week offset (0 = current week, -1 = last week, +1 = next week, …)
+        let weekOffset = 0;
+
+        /**
+         * Returns the Monday of the week that is `offset` weeks from today.
+         */
+        function getMondayOfWeek(offset) {
+            const now = new Date();
+            const day = now.getDay(); // 0 Sun … 6 Sat
+            // JS week starts Sunday; shift so Monday = 0
+            const diffToMonday = (day === 0) ? -6 : 1 - day;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() + diffToMonday + offset * 7);
+            monday.setHours(0, 0, 0, 0);
+            return monday;
+        }
+
+        /**
+         * Get the Date object for a specific weekday index (0 = Mon … 6 = Sun)
+         * relative to the current weekOffset.
+         */
+        function getDateForDayIndex(index) {
+            const monday = getMondayOfWeek(weekOffset);
+            const d = new Date(monday);
+            d.setDate(monday.getDate() + index);
+            return d;
+        }
+
+        /**
+         * Format a date as "3 Mar" (day number + short month).
+         */
+        function formatDateShort(date) {
+            const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+            return `${date.getDate()} ${months[date.getMonth()]}`;
+        }
+
+        /**
+         * Returns true if the given Date is today.
+         */
+        function isToday(date) {
+            const now = new Date();
+            return date.getDate() === now.getDate() &&
+                   date.getMonth() === now.getMonth() &&
+                   date.getFullYear() === now.getFullYear();
+        }
+
+        /**
+         * Update the week label (e.g. "18 Mar – 24 Mar 2026") and
+         * disable the Prev button when we're already on the oldest
+         * allowable week (here: current week; adjust as needed).
+         */
+        function updateWeekLabel() {
+            const monday = getMondayOfWeek(weekOffset);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+            const fmt = d => `${d.getDate()} ${months[d.getMonth()]}`;
+            document.getElementById('weekLabel').textContent =
+                `${fmt(monday)} – ${fmt(sunday)} ${sunday.getFullYear()}`;
+
+            // Don't allow navigating before the current week
+            document.getElementById('btnPrevWeek').disabled = weekOffset <= 0;
+        }
+
+        function changeWeek(delta) {
+            weekOffset += delta;
+            updateWeekLabel();
+            renderDays();
+        }
+
+        function t(key) {
+            if (typeof getNestedTranslation === 'function' && typeof currentLang !== 'undefined') {
+                return getNestedTranslation(currentLang, key) || null;
+            }
+            return null;
+        }
+
+        const defaultTime = '09:00';
+        let currentSchedule = {};
+
+        // Parse existing availability
+        try {
+            if (user.availability && user.availability.startsWith('{')) {
+                currentSchedule = JSON.parse(user.availability);
+                days.forEach(day => {
+                    if (currentSchedule[day]) {
+                        if (currentSchedule[day].start && !currentSchedule[day].slots) {
+                            currentSchedule[day].slots = [];
+                            delete currentSchedule[day].start;
+                            delete currentSchedule[day].end;
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Could not parse availability', e);
+        }
+
+        const daysContainer = document.getElementById('daysContainer');
+
+        function renderDays() {
+            daysContainer.innerHTML = '';
+            days.forEach(day => {
+                const dayData = currentSchedule[day] || { active: false, slots: [] };
+                if (!dayData.slots) dayData.slots = [];
+
+                let slotsHtml = '';
+                if (dayData.slots.length === 0) {
+                    const label = t('schedule.no_slots') || 'Aucun créneau';
+                    slotsHtml = `<div class="no-slots">${label}</div>`;
+                } else {
+                    dayData.slots.forEach((slot, index) => {
+                        slotsHtml += `<div class="slot-chip">${slot}<span class="slot-remove" onclick="removeSlot('${day}', ${index})">&times;</span></div>`;
+                    });
+                }
+
+                const dayLabel = t(`schedule.days.${day}`) || dayFallbacks[day];
+                const addLabel = t('schedule.add_slot') || '+ Ajouter';
+
+                // Compute date for this weekday
+                const dayIndex = days.indexOf(day);
+                const dayDate  = getDateForDayIndex(dayIndex);
+                const todayClass = isToday(dayDate) ? ' today' : '';
+                const dateBadge = `<span class="day-date-badge${todayClass}">${formatDateShort(dayDate)}</span>`;
+
+                const row = document.createElement('div');
+                row.className = 'day-row';
+                row.innerHTML = `
+                    <div class="day-info">
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-${day}" ${dayData.active ? 'checked' : ''} onchange="toggleDay('${day}')">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="day-name">${dayLabel} ${dateBadge}</span>
+                    </div>
+                    <div class="time-inputs ${dayData.active ? 'active' : ''}" id="times-${day}">
+                        <div class="slots-container" id="slots-container-${day}">
+                            ${slotsHtml}
+                        </div>
+                        <div class="add-slot-wrapper">
+                            <input type="time" id="new-slot-time-${day}" value="${defaultTime}" class="new-slot-input">
+                            <button type="button" class="btn-add-slot" onclick="addSlot('${day}')">${addLabel}</button>
+                        </div>
+                    </div>
+                `;
+                daysContainer.appendChild(row);
+            });
+        }
+
+        function toggleDay(day) {
+            const isChecked = document.getElementById(`toggle-${day}`).checked;
+            if (!currentSchedule[day]) currentSchedule[day] = { active: false, slots: [] };
+            currentSchedule[day].active = isChecked;
+            document.getElementById(`times-${day}`).classList.toggle('active', isChecked);
+        }
+
+        function addSlot(day) {
+            const timeInput = document.getElementById(`new-slot-time-${day}`);
+            const timeVal = timeInput.value;
+            if (!timeVal) return;
+            if (!currentSchedule[day]) currentSchedule[day] = { active: true, slots: [] };
+            if (!currentSchedule[day].slots) currentSchedule[day].slots = [];
+            if (!currentSchedule[day].slots.includes(timeVal)) {
+                currentSchedule[day].slots.push(timeVal);
+                currentSchedule[day].slots.sort();
+                renderDays();
+            }
+        }
+
+        function removeSlot(day, index) {
+            if (currentSchedule[day] && currentSchedule[day].slots) {
+                currentSchedule[day].slots.splice(index, 1);
+                renderDays();
+            }
+        }
+
+        async function handleSave(e) {
+            e.preventDefault();
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+
+            const availabilityString = JSON.stringify(currentSchedule);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = t('common.loading') || 'Enregistrement...';
+
+            try {
+                const response = await fetch(`${API_URL}/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ availability: availabilityString })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(t('schedule.success') || 'Horaires enregistrés avec succès', 'success');
+                    const updatedUser = { ...user, availability: availabilityString };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                } else {
+                    showMessage(data.message || t('schedule.error') || 'Erreur', 'error');
+                }
+            } catch (error) {
+                showMessage(t('schedule.error') || 'Erreur lors de l\'enregistrement', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = t('schedule.save') || 'Enregistrer';
+            }
+        }
+
+        function showMessage(text, type) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = `message ${type}`;
+            box.style.display = 'block';
+        }
+
+        // Render immediately on script execution so days always show
+        updateWeekLabel();
+        renderDays();
+
+        // Re-render once i18n has loaded to apply translated day names
+        document.addEventListener('DOMContentLoaded', () => {
+            // i18n.js also listens for DOMContentLoaded; give it a tick to run first
+            setTimeout(() => {
+                updateWeekLabel();
+                renderDays();
+            }, 200);
+        });
+    </script>
+</body>
+
+</html>
