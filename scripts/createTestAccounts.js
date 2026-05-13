@@ -1,64 +1,61 @@
 /**
  * @file scripts/createTestAccounts.js
- * @description Creates specific test accounts (marie, patient1, admin) for PsyConnect.
+ * @description Script to create specific test accounts requested by the user.
  */
 
+const dotenv = require('dotenv');
 const User = require('../models/User');
+
+// Load environment variables
+dotenv.config();
+
+const ACCOUNTS = [
+    {
+        firstName: 'Doctor',
+        lastName: 'Momo',
+        email: 'momo',
+        password: '1',
+        role: 'doctor',
+        isVerified: true
+    },
+    {
+        firstName: 'Patient',
+        lastName: 'Test',
+        email: 'patient',
+        password: '1',
+        role: 'patient',
+        isVerified: true
+    },
+    {
+        firstName: 'Admin',
+        lastName: 'System',
+        email: 'admin',
+        password: 'admin',
+        role: 'admin',
+        isSuperAdmin: true,
+        isVerified: true
+    }
+];
 
 const createAccounts = async () => {
     try {
-        console.log('✅ Connecté à MySQL');
+        console.log('🚀 Initializing test accounts creation...');
 
-        const accounts = [
-            {
-                firstName: 'Mohammed',
-                lastName: 'Doctor',
-                email: 'mohammed',
-                phone: '+33600000001',
-                password: '1',
-                role: 'doctor',
-                isSuperAdmin: false,
-                isVerified: true,
-                specialty: 'Psychologue Clinicien',
-                bio: 'Je suis Dr. Mohammed.'
-            },
-            {
-                firstName: 'Patient',
-                lastName: 'One',
-                email: 'patient1',
-                phone: '+33600000002',
-                password: '1',
-                role: 'patient',
-                isSuperAdmin: false,
-                isVerified: true
-            },
-            {
-                firstName: 'Super',
-                lastName: 'Admin',
-                email: 'admin',
-                phone: '+33600000000',
-                password: 'admin',
-                role: 'admin',
-                isSuperAdmin: true,
-                isVerified: true
+        for (const accountData of ACCOUNTS) {
+            const existing = await User.findOneByEmail(accountData.email);
+            if (existing) {
+                console.log(`ℹ️  Account already exists: ${accountData.email}`);
+                continue;
             }
-        ];
 
-        for (const account of accounts) {
-            const existing = await User.findOneByEmail(account.email);
-            if (!existing) {
-                await User.create(account);
-                console.log(`✅ Compte créé: ${account.email} / ${account.password} (${account.role})`);
-            } else {
-                // If it exists, update the password to make sure it matches what the user expects
-                await User.updatePassword(existing.id, account.password);
-                console.log(`ℹ️ Compte mis à jour (mot de passe réinitialisé): ${account.email} / ${account.password} (${account.role})`);
-            }
+            await User.create(accountData);
+            console.log(`✅ Created ${accountData.role}: ${accountData.email} / ${accountData.password}`);
         }
 
+        console.log('✨ All accounts processed successfully.');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Erreur:', error);
+        console.error('❌ Error creating accounts:', error);
         process.exit(1);
     }
 };
